@@ -18,8 +18,6 @@
 #include "chat1002.h"
 
 #include <Windows.h>
-/*PLEASE DEFINE WHERE YOUR INDIVIDUAL .ini PATH IS*/
-#define iniLoc "G:\My Drive\SIT\INF1002-Programming Fundamentals [202223 T1]\INF_1002_C_T11"
 
 /*
  * Get the response to a question.
