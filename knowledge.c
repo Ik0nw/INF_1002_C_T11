@@ -34,13 +34,16 @@
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
-	
 
 	/* to be implemented */
-	if(strstr(*intent, *entity) != NULL){
+	char *f, content;
+	printf("knowledge_get() | Intent: %s | Entity: %s", intent, entity);
+
+	/*
+	if(strstr(intent, entity) != NULL){
 		LPCSTR ini = "C:\\config.ini";
 	}
-
+	*/
 	return KB_NOTFOUND;
 
 }
@@ -80,8 +83,22 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  */
 int knowledge_read(FILE *f) {
 
+	char c;
 	/* to be implemented */
-
+	if (f == NULL)
+    {
+        printf("Cannot open file \n");
+    }
+	else 
+	{
+		printf("Knowledgebase: \n");
+		do{
+			c = fgetc(f);
+			printf("%c", c);
+		}
+		while(c != EOF);
+	};
+	
 	return 0;
 }
 
