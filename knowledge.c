@@ -32,6 +32,7 @@
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+	
 
 	/* to be implemented */
 
