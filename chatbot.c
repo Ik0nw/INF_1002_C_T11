@@ -193,15 +193,11 @@ int chatbot_is_question(const char *intent) {
 		return 1;
 	}
 	else{
+		printf("I do not understand %s.", intent);
 		return 0;
 	}
-	/* to be implemented */
-
-	
-
+	/* Implemented */
 }
-
-
 /*
  * Answer a question.
  *
@@ -215,12 +211,20 @@ int chatbot_is_question(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after a question)
  */
+
+// inc      - the number of words in the question
+// inv      - an array of pointers to each word in the question
+// response - a buffer to receive the response
+// n        - the size of the response buffer
+
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
-
+	for(int i=1; i<inc; i++){
+		if (!( i==1 && ( (strcmp(inv[i],"is") == 0 ) || (strcmp(inv[i], "are")==0) ) )){
+			snprintf(response, n, inv[i]);
+		}
+	}
 	/* to be implemented */
-
 	return 0;
-
 }
 
 
