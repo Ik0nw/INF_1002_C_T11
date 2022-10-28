@@ -17,6 +17,10 @@
 #include <string.h>
 #include "chat1002.h"
 
+#include <Windows.h>
+/*PLEASE DEFINE WHERE YOUR INDIVIDUAL .ini PATH IS*/
+#define iniLoc "G:\My Drive\SIT\INF1002-Programming Fundamentals [202223 T1]\INF_1002_C_T11"
+
 /*
  * Get the response to a question.
  *
@@ -35,6 +39,9 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	
 
 	/* to be implemented */
+	if(strstr(*intent, *entity) != NULL){
+		LPCSTR ini = "C:\\config.ini";
+	}
 
 	return KB_NOTFOUND;
 
