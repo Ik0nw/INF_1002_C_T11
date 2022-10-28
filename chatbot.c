@@ -192,10 +192,12 @@ int chatbot_is_question(const char *intent) {
 	if( (strcmp(intent,"where")==0) || (strcmp(intent,"what")==0) || (strcmp(intent,"who")==0) ) {
 		return 1;
 	}
-	
+	else{
+		return 0;
+	}
 	/* to be implemented */
 
-	return 0;
+	
 
 }
 
