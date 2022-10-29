@@ -80,7 +80,6 @@ const char *chatbot_username() {
  *   1, if the chatbot should stop (i.e. it detected the EXIT intent)
  */
 int chatbot_main(int inc, char *inv[], char *response, int n) {
-
 	/* check for empty input */
 	if (inc < 1) {
 		snprintf(response, n, "");
@@ -218,12 +217,32 @@ int chatbot_is_question(const char *intent) {
 // n        - the size of the response buffer
 
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
-	for(int i=1; i<inc; i++){
-		if (!( i==1 && ( (strcmp(inv[i],"is") == 0 ) || (strcmp(inv[i], "are")==0) ) )){
-			snprintf(response, n, inv[i]);
+	int skip = 1;
+	int length = 0;
+	//If inv[1] does not contains "is" or "are", we can include them as entity.
+	if (!(strcmp(inv[1], "is") == 0 || strcmp(inv[1], "are") == 0)) {
+		skip = 0;
+	}
+	//If inv[1] contains "is" or "are", we can exclude them from entity.
+	if (skip == 1) {
+		length += snprintf(response + length, n, inv[2]);
+		//sprintf(response, inv[2]);
+		for (int i = 3; i < inc; i++) {
+			//sprintf(response, strlen(response), inv[i]);
+			length += snprintf(response + length, n, " ");
+			length += snprintf(response + length, n, inv[i]);
 		}
 	}
-	/* to be implemented */
+	// If inv[1] doesnt contain "is" or "are", we can include them in entity.
+	else {
+		for (int i = 1; i < inc; i++) {
+			if (i != 1) {
+				length += snprintf(response + length, n, " ");
+			}
+			length += snprintf(response + length, n, inv[i]);
+		}
+	}
+	// Note from Tian Le: the entity is stored in response.
 	return 0;
 }
 
