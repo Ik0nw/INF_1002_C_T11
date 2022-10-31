@@ -171,7 +171,8 @@ int chatbot_is_load(const char *intent) {
 int chatbot_do_load(int inc, char *inv[], char *response, int n) {
 
 	/* to be implemented */
-
+	knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
+	
 	return 0;
 
 }
@@ -236,6 +237,9 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 			}
 			length += snprintf(response + length, n, inv[i]);
 		}
+
+	 // Swee Boon: 
+	knowledge_get(inv[MAX_INPUT], inv, response, MAX_INPUT);
 	}
 	// Note from Tian Le: the entity is stored in response.
 	return 0;

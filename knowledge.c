@@ -37,6 +37,7 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 
 	/* to be implemented */
 	char *f, content;
+	knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
 	printf("knowledge_get() | Intent: %s | Entity: %s", intent, entity);
 
 	/*
@@ -87,18 +88,18 @@ int knowledge_read(FILE *f) {
 	/* to be implemented */
 	if (f == NULL)
     {
-        printf("Cannot open file \n");
+        printf("knowledge_read() | Cannot open file \n");
     }
 	else 
 	{
-		printf("Knowledgebase: \n");
+		printf("knowledge_read() | File Output: \n");
 		do{
 			c = fgetc(f);
 			printf("%c", c);
 		}
 		while(c != EOF);
 	};
-	
+
 	return 0;
 }
 

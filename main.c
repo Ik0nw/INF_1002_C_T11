@@ -66,9 +66,7 @@ int main(int argc, char *argv[]) {
 
 		/* invoke the chatbot */
 		done = chatbot_main(inc, inv, output, MAX_RESPONSE);
-		knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
-		/*added knowledge_get into printf function*/
-		printf("%s: %s\n", chatbot_botname(), knowledge_get(input, output, *argo_knowledg, MAX_INPUT));
+		printf("%s: %s\n", chatbot_botname(), output);
 
 	} while (!done);
 
