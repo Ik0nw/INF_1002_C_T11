@@ -211,11 +211,6 @@ int chatbot_is_question(const char *intent) {
  *   0 (the chatbot always continues chatting after a question)
  */
 
-// inc      - the number of words in the question
-// inv      - an array of pointers to each word in the question
-// response - a buffer to receive the response
-// n        - the size of the response buffer
-
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	int skip = 1;
 	int length = 0;
