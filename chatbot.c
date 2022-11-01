@@ -189,7 +189,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_question(const char *intent) {
-	if( (strcmp(intent,"Where")==0) || (strcmp(intent,"What")==0) || (strcmp(intent,"Who")==0) ) {
+	if( (strcmp(intent,"where")==0) || (strcmp(intent,"what")==0) || (strcmp(intent,"who")==0) ) {
 		return 1;
 	}
 	else{
@@ -215,7 +215,7 @@ int chatbot_is_question(const char *intent) {
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	int skip = 1;
 	int length = 0;
-	//If inv[1] does not contains "is" or "are", we can include them as entity.
+	//If inv[1] does not contain "is" or "are", we can include them as entity.
 	if (!(strcmp(inv[1], "is") == 0 || strcmp(inv[1], "are") == 0)) {
 		skip = 0;
 	}
@@ -237,11 +237,10 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 			}
 			length += snprintf(response + length, n, inv[i]);
 		}
-
-	 // Swee Boon: 
-	knowledge_get(inv[MAX_INPUT], inv, response, MAX_INPUT);
 	}
+
 	// Note from Tian Le: the entity is stored in response.
+
 	return 0;
 }
 
