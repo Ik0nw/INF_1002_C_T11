@@ -22,9 +22,9 @@ each question intent understood by the chatbot, the knowledge base should suppor
 # Stages check
 
 ### Stage 1
-- [ ] Implement a preliminary version of knowledge_get() 
-- [ ] returns a few hard-coded responses to questions, and implement chatbot_is_question() and
-- [ ] chatbot_do_question() to use it.
+- [x] Implement a preliminary version of knowledge_get() 
+- [x] returns a few hard-coded responses to questions, and implement chatbot_is_question() and
+- [x] chatbot_do_question() to use it.
 
 ### Stage 2
 - [ ] Implement knowledge_put() so that you can add new entities to the knowledge base and
