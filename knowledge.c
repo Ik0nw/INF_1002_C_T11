@@ -33,9 +33,69 @@
  *   KB_NOTFOUND, if no response could be found
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
-int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+int knowledge_get(const char *intent, const char *entity, char *response, int n, FILE *f) {
 
-	/* to be implemented */
+	/*No Error Handling for keys not found in .ini*/
+
+	int i = 0;
+	char buffer[256];
+
+	printf("knowledge_get() | Intent: %s | Entity: %s\n", intent, entity);
+
+	while (fgets(buffer, sizeof(buffer), f)) {
+
+		char* token = strtok(buffer, "=");
+
+		/*[what] response*/
+		if (strstr(token, "[what]") != NULL && strstr(intent, "what") != NULL) {
+			printf("knowledge_get() | [what] Token found\n");
+			while (strstr(token, "[where]") == NULL && fgets(buffer, sizeof(buffer), f)) {
+				token = strtok(buffer, "=");
+				printf("knowledge_get() | [what]Key: %s\n", token);
+
+				/*Check if key is found*/
+				if (strstr(token, entity) != NULL) {
+					response = strtok(NULL, "=");
+					printf("knowledge_get() | [what]Response for key '%s' found: %s\n", token, response);
+					break;
+				}
+			}
+		}
+		/*[where] response*/
+		else if (strstr(token, "[where]") != NULL && strstr(intent, "where") != NULL) {
+			printf("knowledge_get() | [where] Token found\n");
+			while (strstr(token, "[who]") == NULL && fgets(buffer, sizeof(buffer), f)) {
+				token = strtok(buffer, "=");
+				printf("knowledge_get() | [where]Key: %s\n", token);
+
+				/*Check if key is found*/
+				if (strstr(token, entity) != NULL) {
+					response = strtok(NULL, "=");
+					printf("knowledge_get() | [where]Response for key '%s' found: %s\n", token, response);
+					break;
+				}
+			}
+		}
+		/*[who] response*/
+		else if (strstr(token, "[who]") != NULL && strstr(intent, "who") != NULL) {
+			printf("knowledge_get() | [who] Token found\n");
+			while (fgets(buffer, sizeof(buffer), f)) {
+				token = strtok(buffer, "=");
+				printf("knowledge_get() | [who]Key: %s\n", token);
+
+				/*Check if key is found*/
+				if (strstr(token, entity) != NULL) {
+					response = strtok(NULL, "=");
+					printf("knowledge_get() | [who]Response for key '%s' found: %s\n", token, response);
+					break;
+				}
+			}
+		}
+
+	}
+	return 0;
+	
+	/* to be implemented 
 	char *f, content;
 	knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
 	printf("knowledge_get() | Intent: %s | Entity: %s", intent, entity);
@@ -44,8 +104,8 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	if(strstr(intent, entity) != NULL){
 		LPCSTR ini = "C:\\config.ini";
 	}
-	*/
-	return KB_NOTFOUND;
+	
+	return KB_NOTFOUND;*/
 
 }
 
