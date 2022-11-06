@@ -60,6 +60,10 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n,
 					break;
 				}
 			}
+			if (strstr(token, entity) == NULL) {
+				response = '\0';
+				knowledge_put(intent, entity, response, f);
+			}
 		}
 		/*[where] response*/
 		else if (strstr(token, "[where]") != NULL && strstr(intent, "where") != NULL) {
@@ -75,6 +79,11 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n,
 					break;
 				}
 			}
+
+			if (strstr(token, entity) == NULL) {
+				response = '\0';
+				knowledge_put(intent, entity, response, f);
+			}
 		}
 		/*[who] response*/
 		else if (strstr(token, "[who]") != NULL && strstr(intent, "who") != NULL) {
@@ -89,6 +98,11 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n,
 					printf("knowledge_get() | [who]Response for key '%s' found: %s\n", token, response);
 					break;
 				}
+			}
+
+			if (strstr(token, entity) == NULL) {
+				response = '\0';
+				knowledge_put(intent, entity, response, f);
 			}
 		}
 
@@ -125,11 +139,40 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n,
  *   KB_NOMEM, if there was a memory allocation failure
  *   KB_INVALID, if the intent is not a valid question word
  */
-int knowledge_put(const char *intent, const char *entity, const char *response) {
+int knowledge_put(const char *intent, const char *entity, const char *response, FILE *f) {
 
 	/* to be implemented */
+	printf("--------------------\n");
+	printf("knowledge_put() | We got here!\n");
+	printf("Intent: %s\n", intent);
+	printf("Entity: %s\n", entity);
+	printf("Response: %s\n", response);
+	
+	char putBuffer[MAX_RESPONSE];
+	//char* putBuffer[MAX_RESPONSE];
+	//char* token = strtok(putBuffer, "="); 
+	
+	// For unkown entity, under [WHAT].
+	if (compare_token(intent, "what") == 0) {
+		if (compare_token(entity, ""))
+		printf("%s: I don't know. What is %s?\n", chatbot_botname(), entity);
 
-	return KB_INVALID;
+		//prompt_user( - buffer - , - 256 - , - a string. not sure how to put. -);
+	}
+
+	// For unkown entity, under [WHERE].
+	else if (compare_token(intent, "where") == 0) {
+		printf("%s: I don't know. Where is %s?\n", chatbot_botname(), entity);
+	}
+	// For unkown entity, under [WHO].
+	else if (compare_token(intent, "who") == 0) {
+		printf("%s: I don't know. Who is %s?\n", chatbot_botname(), entity);
+	}
+	else {
+		return KB_INVALID;
+	}
+
+	
 
 }
 
