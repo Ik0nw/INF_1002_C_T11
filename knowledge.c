@@ -188,7 +188,10 @@ int knowledge_put(const char *intent, const char *entity, const char *response, 
 int knowledge_read(FILE *f) {
 	char line[MAX_INPUT];
 	char c;
-
+	int intentcounter = 0;
+	// 1 = what
+	// 2 = where
+	// 3 = who
 	/* to be implemented */
 	if (f == NULL)
     {
@@ -198,8 +201,19 @@ int knowledge_read(FILE *f) {
 	{
 		printf("knowledge_read() | File Output: \n");
 		while (fgets(line, MAX_INPUT, f) != NULL) {
-			if (compare_token(line, "[who]") == 0) {
-				printf("yas");
+			if (compare_token(line, "[what]\n") == 0) {
+				intentcounter = 1;
+			}
+			else if (intentcounter == 1) {
+				if (compare_token(line, "\n") == 0) {
+					intentcounter = 0;
+				}
+			}
+			if (compare_token(line, "[where]\n") == 0) {
+
+			}
+			if (compare_token(line, "[who]\n") == 0) {
+
 			}
 		}
 		fclose(f);
