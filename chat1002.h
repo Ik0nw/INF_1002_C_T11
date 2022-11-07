@@ -9,7 +9,6 @@
 #define _CHAT1002_H
 
 #include <stdio.h>
-
 /* the maximum number of characters we expect in a line of input (including the terminating null)  */
 #define MAX_INPUT    256
 
@@ -62,14 +61,4 @@ typedef struct knowledge_node {
 	char entity[MAX_ENTITY];
 	char response[MAX_RESPONSE];
 	struct knowledge_node* next;
-}
-
-typedef struct knowledge_node KNOWLEDGE_NODE;
-typedef KNOWLEDGE_NODE *KNOWLEDGE_NODE_PTR;
-
-// head pointer
-KNOWLEDGE_NODE_PTR* knowledge_ptr = NULL;
-
-head_node = (KNOWLEDGE_NODE_PTR*)malloc(sizeof(KNOWLEDGE_NODE));
-// point head pointer to head node
-knowledge_ptr = head_node;
+}NODE;
