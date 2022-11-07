@@ -159,8 +159,6 @@ int chatbot_is_load(const char *intent) {
 	else {
 		return 0;
 	}
-	
-
 }
 
 

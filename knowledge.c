@@ -186,8 +186,9 @@ int knowledge_put(const char *intent, const char *entity, const char *response, 
  * Returns: the number of entity/response pairs successful read from the file
  */
 int knowledge_read(FILE *f) {
-
+	char line[MAX_INPUT];
 	char c;
+
 	/* to be implemented */
 	if (f == NULL)
     {
@@ -196,11 +197,12 @@ int knowledge_read(FILE *f) {
 	else 
 	{
 		printf("knowledge_read() | File Output: \n");
-		do{
-			c = fgetc(f);
-			printf("%c", c);
+		while (fgets(line, MAX_INPUT, f) != NULL) {
+			if (compare_token(line, "[who]") == 0) {
+				printf("yas");
+			}
 		}
-		while(c != EOF);
+		fclose(f);
 	};
 
 	return 0;
