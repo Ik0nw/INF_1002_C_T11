@@ -61,5 +61,7 @@ typedef struct knowledge_node {
 	char intent[MAX_INTENT];
 	char entity[MAX_ENTITY];
 	char response[MAX_RESPONSE];
-	struct what_node* next;
+	struct knowledge_node* next;
 }NODE;
+
+typedef struct NODE* NODEHEAD;
