@@ -187,7 +187,8 @@ int knowledge_put(const char *intent, const char *entity, const char *response, 
  */
 int knowledge_read(FILE *f) {
 	char line[MAX_INPUT];
-	char c;
+	char *entity;
+	char *response;
 	int intentcounter = 0;
 	// 1 = what
 	// 2 = where
@@ -207,13 +208,39 @@ int knowledge_read(FILE *f) {
 			else if (intentcounter == 1) {
 				if (compare_token(line, "\n") == 0) {
 					intentcounter = 0;
+					continue;
 				}
+				entity = strtok(line, "=");
+				response = strtok(NULL, "=");
+				printf("entity : %s", entity);
+				printf("response : %s", response);
+
 			}
 			if (compare_token(line, "[where]\n") == 0) {
-
+				intentcounter = 2;
+			}
+			else if (intentcounter == 2) {
+				if (compare_token(line, "\n") == 0) {
+					intentcounter = 0;
+					continue;
+				}
+				entity = strtok(line, "=");
+				response = strtok(NULL, "=");
+				printf("entity : %s", entity);
+				printf("response : %s", response);
 			}
 			if (compare_token(line, "[who]\n") == 0) {
-
+				intentcounter = 3;
+			}
+			else if (intentcounter == 3) {
+				if (compare_token(line, "\n") == 0) {
+					intentcounter = 0;
+					continue;
+				}
+				entity = strtok(line, "=");
+				response = strtok(NULL, "=");
+				printf("entity : %s", entity);
+				printf("response : %s", response);
 			}
 		}
 		fclose(f);
