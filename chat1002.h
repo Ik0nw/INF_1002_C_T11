@@ -62,6 +62,14 @@ typedef struct knowledge_node {
 	char entity[MAX_ENTITY];
 	char response[MAX_RESPONSE];
 	struct knowledge_node* next;
-}NODE;
+}
 
-NODE* head = NULL;
+typedef struct knowledge_node KNOWLEDGE_NODE;
+typedef KNOWLEDGE_NODE *KNOWLEDGE_NODE_PTR;
+
+// head pointer
+KNOWLEDGE_NODE_PTR* knowledge_ptr = NULL;
+
+head_node = (KNOWLEDGE_NODE_PTR*)malloc(sizeof(KNOWLEDGE_NODE));
+// point head pointer to head node
+knowledge_ptr = head_node;
