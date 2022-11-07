@@ -153,8 +153,13 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
 int chatbot_is_load(const char *intent) {
 
 	/* to be implemented */
-
-	return 0;
+	if (compare_token(intent, "LOAD") == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+	
 
 }
 
@@ -193,7 +198,6 @@ int chatbot_is_question(const char *intent) {
 		return 1;
 	}
 	else{
-		printf("I do not understand %s.", intent);
 		return 0;
 	}
 	/* Implemented */
