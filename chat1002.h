@@ -64,4 +64,4 @@ typedef struct knowledge_node {
 	struct knowledge_node* next;
 }NODE;
 
-typedef struct NODE* NODEHEAD;
+NODE* head = NULL;
