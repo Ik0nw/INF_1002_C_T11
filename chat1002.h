@@ -55,3 +55,11 @@ int knowledge_read(FILE *f);
 void knowledge_write(FILE *f);
 
 #endif
+
+/*Self declared*/
+typedef struct knowledge_node {
+	char intent[MAX_INTENT];
+	char entity[MAX_ENTITY];
+	char response[MAX_RESPONSE];
+	struct knowledge_node* next;
+}NODE;
