@@ -57,9 +57,20 @@ void knowledge_write(FILE *f);
 #endif
 
 /*Self declared*/
-typedef struct knowledge_node {
-	char intent[MAX_INTENT];
+typedef struct what_node {
 	char entity[MAX_ENTITY];
 	char response[MAX_RESPONSE];
-	struct knowledge_node* next;
-}NODE;
+	struct what_node* next;
+}WHATNODE;
+
+typedef struct where_node {
+	char entity[MAX_ENTITY];
+	char response[MAX_RESPONSE];
+	struct where_node* next;
+}WHERENODE;
+
+typedef struct who_node {
+	char entity[MAX_ENTITY];
+	char response[MAX_RESPONSE];
+	struct who_node* next;
+}WHONODE;
