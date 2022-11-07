@@ -264,12 +264,16 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "reset"
  *  0, otherwise
  */
-int chatbot_is_reset(const char *intent) {
+int chatbot_is_reset(const char* intent) {
 
-	/* to be implemented */
-
-	return 0;
-
+	if (compare_token(intent, "reset") == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 
@@ -304,10 +308,14 @@ int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
 int chatbot_is_save(const char *intent) {
 
 	/* to be implemented */
-
-	return 0;
-
+	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
+
 
 
 /*
