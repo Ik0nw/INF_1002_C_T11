@@ -19,6 +19,8 @@
 
 #include <Windows.h>
 
+
+extern NODE* head = NULL;
 /*
  * Get the response to a question.
  *
@@ -202,6 +204,7 @@ int knowledge_read(FILE *f) {
 	{
 		printf("knowledge_read() | File Output: \n");
 		while (fgets(line, MAX_INPUT, f) != NULL) {
+			NODE* newNode;
 			if (compare_token(line, "[what]\n") == 0) {
 				intentcounter = 1;
 			}
@@ -212,8 +215,23 @@ int knowledge_read(FILE *f) {
 				}
 				entity = strtok(line, "=");
 				response = strtok(NULL, "=");
-				printf("entity : %s", entity);
-				printf("response : %s", response);
+				response[strlen(response) - 1] = '\0';
+				if (head == NULL) {
+					head = (NODE*)malloc(sizeof(NODE));
+					strncpy(head->entity, entity, MAX_ENTITY);
+					strncpy(head->response, response, MAX_RESPONSE);
+					strncpy(head->intent, "what", MAX_INTENT);
+				}
+				else {
+					newNode = (NODE*)malloc(sizeof(NODE));
+					strncpy(newNode->entity, entity, MAX_ENTITY);
+					strncpy(newNode->response, response, MAX_RESPONSE);
+					strncpy(newNode->intent, "what", MAX_INTENT);
+					head->next = newNode;
+				}
+				
+				/*printf("entity : %s", entity);
+				printf("response : %s", response);*/
 
 			}
 			if (compare_token(line, "[where]\n") == 0) {
@@ -226,8 +244,23 @@ int knowledge_read(FILE *f) {
 				}
 				entity = strtok(line, "=");
 				response = strtok(NULL, "=");
-				printf("entity : %s", entity);
-				printf("response : %s", response);
+				response[strlen(response) - 1] = '\0';
+				if (head == NULL) {
+					head = (NODE*)malloc(sizeof(NODE));
+					strncpy(head->entity, entity, MAX_ENTITY);
+					strncpy(head->response, response, MAX_RESPONSE);
+					strncpy(head->intent, "where", MAX_INTENT);
+				}
+				else {
+					newNode = (NODE*)malloc(sizeof(NODE));
+					strncpy(newNode->entity, entity, MAX_ENTITY);
+					strncpy(newNode->response, response, MAX_RESPONSE);
+					strncpy(newNode->intent, "where", MAX_INTENT);
+					head->next = newNode;
+				}
+
+				/*printf("entity : %s", entity);
+				printf("response : %s", response);*/
 			}
 			if (compare_token(line, "[who]\n") == 0) {
 				intentcounter = 3;
@@ -239,10 +272,31 @@ int knowledge_read(FILE *f) {
 				}
 				entity = strtok(line, "=");
 				response = strtok(NULL, "=");
-				printf("entity : %s", entity);
-				printf("response : %s", response);
+				response[strlen(response) - 1] = '\0';
+				if (head == NULL) {
+					head = (NODE*)malloc(sizeof(NODE));
+					strncpy(head->entity, entity, MAX_ENTITY);
+					strncpy(head->response, response, MAX_RESPONSE);
+					strncpy(head->intent, "who", MAX_INTENT);
+				}
+				else {
+					newNode = (NODE*)malloc(sizeof(NODE));
+					strncpy(newNode->entity, entity, MAX_ENTITY);
+					strncpy(newNode->response, response, MAX_RESPONSE);
+					strncpy(newNode->intent, "who", MAX_INTENT);
+					head->next = newNode;
+				}
+
+				/*printf("entity : %s", entity);
+				printf("response : %s", response);*/
 			}
 		}
+		NODE* ptr = head;
+		while (ptr != NULL) {
+			//printf("%s", ptr->response);
+			ptr = ptr->next;
+		}
+		head = clearmemory(head);
 		fclose(f);
 	};
 
@@ -270,4 +324,15 @@ void knowledge_write(FILE *f) {
 
 	/* to be implemented */
 
+}
+
+
+NODE* clearmemory(NODE* head) {
+	NODE* ptr = head;
+	while (ptr != NULL) {
+		ptr = ptr->next;
+		free(head);
+		head = ptr;
+	}
+	return head;
 }
