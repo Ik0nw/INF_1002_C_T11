@@ -307,9 +307,29 @@ void knowledge_reset() {
  * Input:
  *   f - the file
  */
-void knowledge_write(FILE *f) {
-
-	/* to be implemented */
-
+void knowledge_write(FILE* f)
+{
+	const char* intent_list[3];
+	intent_list[0] = "[what]";
+	intent_list[1] = "[where]";
+	intent_list[2] = "[who]";
+	char buffer[255];
+	int j = 0;
+	// empty string
+	char empty[MAX_INPUT] = "";
+	p = head;
+	while (p != NULL)
+	{
+		if (!strcmp(empty,p->entity) == 0)
+		{
+			strcpy(empty, p->entity);
+			fputs(p->entity, f);
+			fputs("\n", f);
+		}
+		// format string to concatenate 2 variable together in 1 line
+		j = snprintf(buffer, 255, "%s = %s\n", p->intent, p->response);
+		fputs(buffer, f);
+		p = p->next;
+	}
 }
 
