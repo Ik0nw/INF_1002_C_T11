@@ -17,8 +17,6 @@
 #include <string.h>
 #include "chat1002.h"
 
-#include <Windows.h>
-
 
 extern NODE* head = NULL;
 /*
@@ -35,94 +33,13 @@ extern NODE* head = NULL;
  *   KB_NOTFOUND, if no response could be found
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
-int knowledge_get(const char *intent, const char *entity, char *response, int n, FILE *f) {
+int knowledge_get(const char *intent, const char *entity, char *response, int n) {
 
-	/*No Error Handling for keys not found in .ini*/
 
-	int i = 0;
-	char buffer[256];
-
-	printf("knowledge_get() | Intent: %s | Entity: %s\n", intent, entity);
-
-	while (fgets(buffer, sizeof(buffer), f)) {
-
-		char* token = strtok(buffer, "=");
-
-		/*[what] response*/
-		if (strstr(token, "[what]") != NULL && strstr(intent, "what") != NULL) {
-			printf("knowledge_get() | [what] Token found\n");
-			while (strstr(token, "[where]") == NULL && fgets(buffer, sizeof(buffer), f)) {
-				token = strtok(buffer, "=");
-				printf("knowledge_get() | [what]Key: %s\n", token);
-
-				/*Check if key is found*/
-				if (strstr(token, entity) != NULL) {
-					response = strtok(NULL, "=");
-					printf("knowledge_get() | [what]Response for key '%s' found: %s\n", token, response);
-					break;
-				}
-			}
-			if (strstr(token, entity) == NULL) {
-				response = '\0';
-				knowledge_put(intent, entity, response, f);
-			}
-		}
-		/*[where] response*/
-		else if (strstr(token, "[where]") != NULL && strstr(intent, "where") != NULL) {
-			printf("knowledge_get() | [where] Token found\n");
-			while (strstr(token, "[who]") == NULL && fgets(buffer, sizeof(buffer), f)) {
-				token = strtok(buffer, "=");
-				printf("knowledge_get() | [where]Key: %s\n", token);
-
-				/*Check if key is found*/
-				if (strstr(token, entity) != NULL) {
-					response = strtok(NULL, "=");
-					printf("knowledge_get() | [where]Response for key '%s' found: %s\n", token, response);
-					break;
-				}
-			}
-
-			if (strstr(token, entity) == NULL) {
-				response = '\0';
-				knowledge_put(intent, entity, response, f);
-			}
-		}
-		/*[who] response*/
-		else if (strstr(token, "[who]") != NULL && strstr(intent, "who") != NULL) {
-			printf("knowledge_get() | [who] Token found\n");
-			while (fgets(buffer, sizeof(buffer), f)) {
-				token = strtok(buffer, "=");
-				printf("knowledge_get() | [who]Key: %s\n", token);
-
-				/*Check if key is found*/
-				if (strstr(token, entity) != NULL) {
-					response = strtok(NULL, "=");
-					printf("knowledge_get() | [who]Response for key '%s' found: %s\n", token, response);
-					break;
-				}
-			}
-
-			if (strstr(token, entity) == NULL) {
-				response = '\0';
-				knowledge_put(intent, entity, response, f);
-			}
-		}
-
-	}
-	return 0;
 	
-	/* to be implemented 
-	char *f, content;
-	knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
-	printf("knowledge_get() | Intent: %s | Entity: %s", intent, entity);
-
-	/*
-	if(strstr(intent, entity) != NULL){
-		LPCSTR ini = "C:\\config.ini";
-	}
+	return KB_NOTFOUND;
 	
-	return KB_NOTFOUND;*/
-
+	
 }
 
 
@@ -141,40 +58,9 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n,
  *   KB_NOMEM, if there was a memory allocation failure
  *   KB_INVALID, if the intent is not a valid question word
  */
-int knowledge_put(const char *intent, const char *entity, const char *response, FILE *f) {
+int knowledge_put(const char *intent, const char *entity, const char *response) {
 
-	/* to be implemented */
-	printf("--------------------\n");
-	printf("knowledge_put() | We got here!\n");
-	printf("Intent: %s\n", intent);
-	printf("Entity: %s\n", entity);
-	printf("Response: %s\n", response);
-	
-	char putBuffer[MAX_RESPONSE];
-	//char* putBuffer[MAX_RESPONSE];
-	//char* token = strtok(putBuffer, "="); 
-	
-	// For unkown entity, under [WHAT].
-	if (compare_token(intent, "what") == 0) {
-		if (compare_token(entity, ""))
-		printf("%s: I don't know. What is %s?\n", chatbot_botname(), entity);
-
-		//prompt_user( - buffer - , - 256 - , - a string. not sure how to put. -);
-	}
-
-	// For unkown entity, under [WHERE].
-	else if (compare_token(intent, "where") == 0) {
-		printf("%s: I don't know. Where is %s?\n", chatbot_botname(), entity);
-	}
-	// For unkown entity, under [WHO].
-	else if (compare_token(intent, "who") == 0) {
-		printf("%s: I don't know. Who is %s?\n", chatbot_botname(), entity);
-	}
-	else {
-		return KB_INVALID;
-	}
-
-	
+	return KB_INVALID;
 
 }
 
@@ -188,6 +74,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response, 
  * Returns: the number of entity/response pairs successful read from the file
  */
 int knowledge_read(FILE *f) {
+	printf("IM HERE");
 	char line[MAX_INPUT];
 	char *entity;
 	char *response;
@@ -205,11 +92,11 @@ int knowledge_read(FILE *f) {
 		printf("knowledge_read() | File Output: \n");
 		
 		if (head == NULL) {
-			NODE* newNode = (NODE *)malloc(sizeof(NODE));
-			strncpy(newNode->entity, "SIT", MAX_ENTITY);
-			strncpy(newNode->response, "in sg", MAX_RESPONSE);
-			strncpy(newNode->intent, "where", MAX_INTENT);
-			head->next = newNode;
+			// NODE* newNode = (NODE *)malloc(sizeof(NODE));
+			// strncpy(newNode->entity, "SIT", MAX_ENTITY);
+			// strncpy(newNode->response, "in sg", MAX_RESPONSE);
+			// strncpy(newNode->intent, "where", MAX_INTENT);
+			// head->next = newNode;
 		}
 		
 
@@ -317,7 +204,7 @@ void knowledge_write(FILE* f)
 	int j = 0;
 	// empty string
 	char empty[MAX_INPUT] = "";
-	p = head;
+	NODE* p = head;
 	while (p != NULL)
 	{
 		if (!strcmp(empty,p->intent) == 0)

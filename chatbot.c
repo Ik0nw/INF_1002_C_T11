@@ -240,12 +240,6 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 		}
 	}
 
-	//SweeBoon:
-	FILE* f;
-	f = fopen("INF1002_Group Project Assignment_Sample.ini", "r");
-	knowledge_get(inv[0], response, response, 256, f);
-
-	// Note from Tian Le: the entity is stored in response.
 
 	return 0;
 }
