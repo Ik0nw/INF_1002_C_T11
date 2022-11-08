@@ -203,111 +203,82 @@ int knowledge_read(FILE *f) {
 	else 
 	{
 		printf("knowledge_read() | File Output: \n");
-		NODE* lastNode;
+		
+		if (head == NULL) {
+			NODE* newNode = (NODE *)malloc(sizeof(NODE));
+			strncpy(newNode->entity, "SIT", MAX_ENTITY);
+			strncpy(newNode->response, "in sg", MAX_RESPONSE);
+			strncpy(newNode->intent, "where", MAX_INTENT);
+			head->next = newNode;
+		}
+		
+
 		while (fgets(line, MAX_INPUT, f) != NULL) {
-			NODE* newNode;
-			if (compare_token(line, "[what]\n") == 0) {
-				intentcounter = 1;
-			}
-			else if (intentcounter == 1) {
-				if (compare_token(line, "\n") == 0) {
-					intentcounter = 0;
-					continue;
-				}
-				entity = strtok(line, "=");
-				response = strtok(NULL, "=");
-				response[strlen(response) - 1] = '\0';
-				if (head == NULL) {
-					head = (NODE*)malloc(sizeof(NODE));
-					strncpy(head->entity, entity, MAX_ENTITY);
-					strncpy(head->response, response, MAX_RESPONSE);
-					strncpy(head->intent, "what", MAX_INTENT);
-					lastNode = head;
-				}
-				else {
-					newNode = (NODE*)malloc(sizeof(NODE));
-					strncpy(newNode->entity, entity, MAX_ENTITY);
-					strncpy(newNode->response, response, MAX_RESPONSE);
-					strncpy(newNode->intent, "what", MAX_INTENT);
-					lastNode->next = newNode;
-					lastNode = newNode;
-
+			
+			if (head == NULL) {
 				
-				}
-				
-				/*printf("entity : %s", entity);
-				printf("response : %s", response);*/
+			}
+			else {
 
-			}
-			if (compare_token(line, "[where]\n") == 0) {
-				intentcounter = 2;
-			}
-			else if (intentcounter == 2) {
-				if (compare_token(line, "\n") == 0) {
-					intentcounter = 0;
-					continue;
+				if (compare_token(line, "[what]\n") == 0) {
+					intentcounter = 1;
 				}
-				entity = strtok(line, "=");
-				response = strtok(NULL, "=");
-				response[strlen(response) - 1] = '\0';
-				if (head == NULL) {
-					head = (NODE*)malloc(sizeof(NODE));
-					strncpy(head->entity, entity, MAX_ENTITY);
-					strncpy(head->response, response, MAX_RESPONSE);
-					strncpy(head->intent, "where", MAX_INTENT);
-					lastNode = head;
-				}
-				else {
-					newNode = (NODE*)malloc(sizeof(NODE));
-					strncpy(newNode->entity, entity, MAX_ENTITY);
-					strncpy(newNode->response, response, MAX_RESPONSE);
-					strncpy(newNode->intent, "where", MAX_INTENT);
-					lastNode->next = newNode;
-					lastNode = newNode;
-					
-				}
+				else if (intentcounter == 1) {
+					if (compare_token(line, "\n") == 0) {
+						intentcounter = 0;
+						continue;
+					}
+					entity = strtok(line, "=");
+					response = strtok(NULL, "=");
+					response[strlen(response) - 1] = '\0';
+					NODE* ptr = head;
+					while (ptr != NULL) {
+						if (ptr->intent == "what") {
+							if (compare_token(entity, ptr->entity) == 0) {
+								printf("SAME %s", entity);
+							}
+						}
+						ptr = ptr->next;
+					}
 
-				/*printf("entity : %s", entity);
-				printf("response : %s", response);*/
-			}
-			if (compare_token(line, "[who]\n") == 0) {
-				intentcounter = 3;
-			}
-			else if (intentcounter == 3) {
-				if (compare_token(line, "\n") == 0) {
-					intentcounter = 0;
-					continue;
-				}
-				entity = strtok(line, "=");
-				response = strtok(NULL, "=");
-				response[strlen(response) - 1] = '\0';
-				if (head == NULL) {
-					head = (NODE*)malloc(sizeof(NODE));
-					strncpy(head->entity, entity, MAX_ENTITY);
-					strncpy(head->response, response, MAX_RESPONSE);
-					strncpy(head->intent, "who", MAX_INTENT);
-					lastNode = head;
-				}
-				else {
-					newNode = (NODE*)malloc(sizeof(NODE));
-					strncpy(newNode->entity, entity, MAX_ENTITY);
-					strncpy(newNode->response, response, MAX_RESPONSE);
-					strncpy(newNode->intent, "who", MAX_INTENT);
-					lastNode->next = newNode;
-					lastNode = newNode;
-					
-				}
 
-				/*printf("entity : %s", entity);
-				printf("response : %s", response);*/
+				}
+				if (compare_token(line, "[where]\n") == 0) {
+					intentcounter = 2;
+				}
+				else if (intentcounter == 2) {
+					if (compare_token(line, "\n") == 0) {
+						intentcounter = 0;
+						continue;
+					}
+					entity = strtok(line, "=");
+					response = strtok(NULL, "=");
+					response[strlen(response) - 1] = '\0';
+
+				}
+				if (compare_token(line, "[who]\n") == 0) {
+					intentcounter = 3;
+				}
+				else if (intentcounter == 3) {
+					if (compare_token(line, "\n") == 0) {
+						intentcounter = 0;
+						continue;
+					}
+					entity = strtok(line, "=");
+					response = strtok(NULL, "=");
+					response[strlen(response) - 1] = '\0';
+
+				}
 			}
+			
 		}
-		NODE* ptr = head;
-		while (ptr != NULL) {
-			printf("%s\n", ptr->response);
-			ptr = ptr->next;
-		}
+			
 		fclose(f);
+		/*NODE* ptr = head;
+		while (ptr != NULL) {
+			printf("%s\n", ptr->intent);
+			ptr = ptr->next;
+		}*/
 	};
 
 	return 0;
