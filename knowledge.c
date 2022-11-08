@@ -320,14 +320,14 @@ void knowledge_write(FILE* f)
 	p = head;
 	while (p != NULL)
 	{
-		if (!strcmp(empty,p->entity) == 0)
+		if (!strcmp(empty,p->intent) == 0)
 		{
-			strcpy(empty, p->entity);
-			fputs(p->entity, f);
+			strcpy(empty, p->intent);
+			fputs(p->intent, f);
 			fputs("\n", f);
 		}
 		// format string to concatenate 2 variable together in 1 line
-		j = snprintf(buffer, 255, "%s = %s\n", p->intent, p->response);
+		j = snprintf(buffer, 255, "%s = %s\n", p->entity, p->response);
 		fputs(buffer, f);
 		p = p->next;
 	}
