@@ -203,6 +203,7 @@ int knowledge_read(FILE *f) {
 	else 
 	{
 		printf("knowledge_read() | File Output: \n");
+		NODE* lastNode;
 		while (fgets(line, MAX_INPUT, f) != NULL) {
 			NODE* newNode;
 			if (compare_token(line, "[what]\n") == 0) {
@@ -221,13 +222,17 @@ int knowledge_read(FILE *f) {
 					strncpy(head->entity, entity, MAX_ENTITY);
 					strncpy(head->response, response, MAX_RESPONSE);
 					strncpy(head->intent, "what", MAX_INTENT);
+					lastNode = head;
 				}
 				else {
 					newNode = (NODE*)malloc(sizeof(NODE));
 					strncpy(newNode->entity, entity, MAX_ENTITY);
 					strncpy(newNode->response, response, MAX_RESPONSE);
 					strncpy(newNode->intent, "what", MAX_INTENT);
-					head->next = newNode;
+					lastNode->next = newNode;
+					lastNode = newNode;
+
+				
 				}
 				
 				/*printf("entity : %s", entity);
@@ -250,13 +255,16 @@ int knowledge_read(FILE *f) {
 					strncpy(head->entity, entity, MAX_ENTITY);
 					strncpy(head->response, response, MAX_RESPONSE);
 					strncpy(head->intent, "where", MAX_INTENT);
+					lastNode = head;
 				}
 				else {
 					newNode = (NODE*)malloc(sizeof(NODE));
 					strncpy(newNode->entity, entity, MAX_ENTITY);
 					strncpy(newNode->response, response, MAX_RESPONSE);
 					strncpy(newNode->intent, "where", MAX_INTENT);
-					head->next = newNode;
+					lastNode->next = newNode;
+					lastNode = newNode;
+					
 				}
 
 				/*printf("entity : %s", entity);
@@ -278,13 +286,16 @@ int knowledge_read(FILE *f) {
 					strncpy(head->entity, entity, MAX_ENTITY);
 					strncpy(head->response, response, MAX_RESPONSE);
 					strncpy(head->intent, "who", MAX_INTENT);
+					lastNode = head;
 				}
 				else {
 					newNode = (NODE*)malloc(sizeof(NODE));
 					strncpy(newNode->entity, entity, MAX_ENTITY);
 					strncpy(newNode->response, response, MAX_RESPONSE);
 					strncpy(newNode->intent, "who", MAX_INTENT);
-					head->next = newNode;
+					lastNode->next = newNode;
+					lastNode = newNode;
+					
 				}
 
 				/*printf("entity : %s", entity);
@@ -293,10 +304,9 @@ int knowledge_read(FILE *f) {
 		}
 		NODE* ptr = head;
 		while (ptr != NULL) {
-			//printf("%s", ptr->response);
+			printf("%s\n", ptr->response);
 			ptr = ptr->next;
 		}
-		head = clearmemory(head);
 		fclose(f);
 	};
 
@@ -308,15 +318,13 @@ int knowledge_read(FILE *f) {
  * Reset the knowledge base, removing all know entitities from all intents.
  */
 void knowledge_reset() {
-	
-	temp = (NODE*)malloc(sizeof(NODE));
-	while (head->next)
-	{
-		temp = head->next;
-		head->next = head->next->next;
-		free(temp);
+	NODE* ptr = head;
+	while (ptr != NULL) {
+		ptr = ptr->next;
+		free(head);
+		head = ptr;
 	}
-	free(temp);
+
 	/* for debugging*/
 	printf("All knowledge is been cleared\n");
 }
@@ -334,13 +342,3 @@ void knowledge_write(FILE *f) {
 
 }
 
-
-NODE* clearmemory(NODE* head) {
-	NODE* ptr = head;
-	while (ptr != NULL) {
-		ptr = ptr->next;
-		free(head);
-		head = ptr;
-	}
-	return head;
-}
