@@ -74,7 +74,6 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  * Returns: the number of entity/response pairs successful read from the file
  */
 int knowledge_read(FILE *f) {
-	printf("IM HERE");
 	char line[MAX_INPUT];
 	char *entity;
 	char *response;
@@ -83,80 +82,91 @@ int knowledge_read(FILE *f) {
 	// 2 = where
 	// 3 = who
 	/* to be implemented */
-	if (f == NULL)
-    {
+	if (f == NULL){
         printf("knowledge_read() | Cannot open file \n");
     }
-	else 
-	{
+	else {
 		printf("knowledge_read() | File Output: \n");
 		
 		if (head == NULL) {
-			// NODE* newNode = (NODE *)malloc(sizeof(NODE));
-			// strncpy(newNode->entity, "SIT", MAX_ENTITY);
-			// strncpy(newNode->response, "in sg", MAX_RESPONSE);
-			// strncpy(newNode->intent, "where", MAX_INTENT);
-			// head->next = newNode;
+			head = (NODE *)malloc(sizeof(NODE));
+			strncpy(head->entity, "SIT", MAX_ENTITY);
+			strncpy(head->response, "in sg", MAX_RESPONSE);
+			strncpy(head->intent, "where", MAX_INTENT);
 		}
-		
-
 		while (fgets(line, MAX_INPUT, f) != NULL) {
+			// if (head == NULL) {
+			// 	head = (NODE*)malloc(sizeof(NODE));
+			// 	strncpy(head->entity, "SIT",MAX_ENTITY);
+			// 	strncpy(head->intent, "what", MAX_INTENT);
+			// 	strncpy(head->response,"TEST RESPONSE", MAX_RESPONSE);
+			// }
+			line[strcspn(line, "\n")] = 0;
+			// if(line[strlen(line)-1]=='\n'){
+			// 	line[strlen(line)-1]='\0';
+			// 	printf("%s", line);
+			// }
+			printf("%s", line);
+			//printf("%s vs [what]",line);
+			//printf("%d\n", strcmp(line, "[what]"));
 			
-			if (head == NULL) {
-				
+			//printf("%d",compare_token(line,"[what]"));
+			//printf("%d:%d\n", strlen(line), strlen("[who]"));
+			//printf("%d\n", compare_token(line,"[who]"));
+			//printf("%d\n", compare_token(line,"[who]\n"));
+			if (compare_token(line, "[what]") == 0) {
+				intentcounter = 1;
+				printf("Once");
 			}
-			else {
-
-				if (compare_token(line, "[what]\n") == 0) {
-					intentcounter = 1;
+			else if (intentcounter == 1) {
+				if (compare_token(line, "\n") == 0) {
+					intentcounter = 0;
+					continue;
 				}
-				else if (intentcounter == 1) {
-					if (compare_token(line, "\n") == 0) {
-						intentcounter = 0;
-						continue;
-					}
-					entity = strtok(line, "=");
-					response = strtok(NULL, "=");
-					response[strlen(response) - 1] = '\0';
-					NODE* ptr = head;
-					while (ptr != NULL) {
-						if (ptr->intent == "what") {
-							if (compare_token(entity, ptr->entity) == 0) {
-								printf("SAME %s", entity);
-							}
+				entity = strtok(line, "=");
+				response = strtok(NULL, "=");
+				response[strlen(response) - 1] = '\0';
+				NODE* ptr = head;
+				while (ptr != NULL) {
+					printf("Hello");
+					if (ptr->intent == "what") {
+						printf("yes, its a what\n");
+						if (compare_token(entity, ptr->entity) == 0) {
+							printf("SAME %s", entity);
 						}
-						ptr = ptr->next;
 					}
+					ptr = ptr->next;
+				}
 
 
-				}
-				if (compare_token(line, "[where]\n") == 0) {
-					intentcounter = 2;
-				}
-				else if (intentcounter == 2) {
-					if (compare_token(line, "\n") == 0) {
-						intentcounter = 0;
-						continue;
-					}
-					entity = strtok(line, "=");
-					response = strtok(NULL, "=");
-					response[strlen(response) - 1] = '\0';
-
-				}
-				if (compare_token(line, "[who]\n") == 0) {
-					intentcounter = 3;
-				}
-				else if (intentcounter == 3) {
-					if (compare_token(line, "\n") == 0) {
-						intentcounter = 0;
-						continue;
-					}
-					entity = strtok(line, "=");
-					response = strtok(NULL, "=");
-					response[strlen(response) - 1] = '\0';
-
-				}
 			}
+			if (compare_token(line, "[where]") == 0) {
+				intentcounter = 2;
+			}
+			else if (intentcounter == 2) {
+				if (compare_token(line, "\n") == 0) {
+					intentcounter = 0;
+					continue;
+				}
+				entity = strtok(line, "=");
+				response = strtok(NULL, "=");
+				response[strlen(response) - 1] = '\0';
+
+			}
+			if (compare_token(line, "[who]") == 0) {
+				intentcounter = 3;
+			}
+			else if (intentcounter == 3) {
+				if (compare_token(line, "\n") == 0) {
+					intentcounter = 0;
+					continue;
+				}
+				entity = strtok(line, "=");
+				response = strtok(NULL, "=");
+				response[strlen(response) - 1] = '\0';
+
+			}
+			
 			
 		}
 			

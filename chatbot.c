@@ -174,7 +174,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
 
 	/* to be implemented */
 	knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
-	
+	strncpy(response,"ANYHOW",30);
 	return 0;
 
 }
