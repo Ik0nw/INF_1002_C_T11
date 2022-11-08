@@ -254,9 +254,17 @@ int knowledge_read(FILE *f) {
  * Reset the knowledge base, removing all know entitities from all intents.
  */
 void knowledge_reset() {
-
-	/* to be implemented */
-
+	
+	temp = (NODE*)malloc(sizeof(NODE));
+	while (head->next)
+	{
+		temp = head->next;
+		head->next = head->next->next;
+		free(temp);
+	}
+	free(temp);
+	/* for debugging*/
+	printf("All knowledge is been cleared\n");
 }
 
 
