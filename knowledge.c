@@ -34,12 +34,21 @@ extern NODE* head = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+	// if intent not equal to what who where
+	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
+		return KB_INVALID;
+	}
 
-
-	
+	NODE* current = head;
+	while (current->next != NULL)
+	{
+		if (strcmp(current->intent, intent) == 0 && strcmp(current->entity, entity) == 0) {
+			snprintf(response, n, "%s", current->response);
+			return KB_OK;
+		}
+		current = current->next;
+	}
 	return KB_NOTFOUND;
-	
-	
 }
 
 
