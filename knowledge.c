@@ -212,16 +212,25 @@ void knowledge_write(FILE* f)
 	intent_list[2] = "[who]";
 	char buffer[255];
 	int j = 0;
+	int header = 0;
 	// empty string
 	char empty[MAX_INPUT] = "";
 	NODE* p = head;
+	
 	while (p != NULL)
 	{
 		if (!strcmp(empty,p->intent) == 0)
 		{
+			if (header == 1)
+			{
+				// so after every rows of entity and response, we would have a new line 
+				fputs("\n);
+			}
+			
 			strcpy(empty, p->intent);
 			fputs(p->intent, f);
 			fputs("\n", f);
+		        header = 1;
 		}
 		// format string to concatenate 2 variable together in 1 line
 		j = snprintf(buffer, 255, "%s = %s\n", p->entity, p->response);
