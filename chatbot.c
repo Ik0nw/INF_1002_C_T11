@@ -170,7 +170,7 @@ int chatbot_is_load(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
-int chatbot_do_load(int inc, char *inv[], char *response, int n) {
+int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	int count;
 	if (inc != 2)
 	{
@@ -183,11 +183,12 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
 		f = fopen(inv[1], "r");
 		count = knowledge_read(f);
 		snprintf(response, n, "%d pair read from knowledge base", count);
+		fclose(f);
 	}
 
 	return 0;
 
-
+}
 /*
  * Determine whether an intent is a question.
  *
@@ -198,7 +199,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "what", "where", or "who"
  *  0, otherwise
  */
-int chatbot_is_question(const char *intent) {
+int chatbot_is_question(const char *intent){
 	char tempintent[MAX_INTENT] = "";
 	strcpy(tempintent, intent);
 	for (int i = 0; i < strlen(tempintent); i++) {
@@ -227,6 +228,7 @@ int chatbot_is_question(const char *intent) {
  */
 
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
+
 	int skip = 1;
 	int entitylength = 0;
 	strncpy(response, "", MAX_RESPONSE);
@@ -234,6 +236,9 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	char resstore[MAX_RESPONSE] = "";
 	char intentstore[MAX_INTENT] = "";
 	char entitystore[MAX_ENTITY] = "";
+	for (int i = 0; i < strlen(inv[0]); i++) {
+		inv[0][i] = tolower(inv[0][i]);
+	}
 	strcpy(intentstore, inv[0]);
 	/*If inv[1] does not contain "is" or "are", we can include them as entity.*/
 	if (!(strcmp(inv[1], "is") == 0 || strcmp(inv[1], "are") == 0)) {
@@ -261,7 +266,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	if (knowledge_get(intentstore, entitystore, resstore, n) == KB_NOTFOUND) {
 		printf("%s: I don't know. ", chatbot_botname());
 		for (int i = 0; i < inc; i++) {
-			if (i == strlen(inv) - 3) {
+			if (i == inc-1) {
 				printf("%s?\n", inv[i]);
 			}
 			else {
@@ -279,17 +284,17 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 				else {
 					printf("%s ", inv[i]);
 				}
-				
+
 			}
-			
+
 		}
+
 		printf("%s: ", chatbot_username());
 		fgets(resstore, n, stdin);
-		//knowledget_put(intentstore, entitystore, resstore);
-
-		printf("\n------------------------------\n");
+		knowledge_put(intentstore, entitystore, resstore);
+		strncpy(response, "Thank you.", MAX_RESPONSE);
 	}
-	else {
+	else if(knowledge_get(intentstore, entitystore, response, n) == KB_OK) {
 		//response in buffer. auto return to main function to print. 
 	}
 

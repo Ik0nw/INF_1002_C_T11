@@ -40,9 +40,8 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
 		return KB_INVALID;
 	}
-
 	NODE* current = head;
-	while (current->next != NULL)
+	while (current!= NULL)
 	{
 		if (strcmp(current->intent, intent) == 0 && strcmp(current->entity, entity) == 0) {
 			snprintf(response, n, "%s", current->response);
@@ -193,6 +192,7 @@ int knowledge_read(FILE *f) {
 	while (temp != NULL)
 	{
 		printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
+		knowledge_put(temp->intent, temp->entity, temp->response);
 		temp = temp->next;
 	}
 	return count;
