@@ -52,7 +52,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response);
 void knowledge_reset();
 int knowledge_read(FILE *f);
 void knowledge_write(FILE *f);
-
+int check_exists(char* entity, char* intent, char* response);
 #endif
 
 /*Self declared*/

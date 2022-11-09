@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
-
+#include <stdbool.h>
 
 extern NODE* head = NULL;
 /*
@@ -34,12 +34,21 @@ extern NODE* head = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+	// if intent not equal to what who where
+	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
+		return KB_INVALID;
+	}
 
-
-	
+	NODE* current = head;
+	while (current->next != NULL)
+	{
+		if (strcmp(current->intent, intent) == 0 && strcmp(current->entity, entity) == 0) {
+			snprintf(response, n, "%s", current->response);
+			return KB_OK;
+		}
+		current = current->next;
+	}
 	return KB_NOTFOUND;
-	
-	
 }
 
 
@@ -59,11 +68,90 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
  *   KB_INVALID, if the intent is not a valid question word
  */
 int knowledge_put(const char *intent, const char *entity, const char *response) {
+	
+	// check if the intent is not equal to what who where
+	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
+		return KB_INVALID;
+	}
+	
+	// check if node exists
+	int exists = check_exists(entity, intent, response);
+	if (exists)
+	{
+		return KB_OK;
+	}
+	
+	NODE* new_node = (NODE*)malloc(sizeof(NODE));
+	
+	// if failed to create node means no memory.
+	if (new_node == NULL)
+	{
+		return KB_NOMEM;
+	}
 
-	return KB_INVALID;
+	// copy the intent, entity and response to the new node
+	strcpy(new_node->entity, entity);
+	strcpy(new_node->intent, intent);
+	strcpy(new_node->response, response);
+
+	NODE* temp = head;
+
+	if (temp->next != NULL)
+	{
+		bool judge = true;
+		NODE* current_ptr = temp->next;
+		NODE* pre_ptr = temp;
+		while (strcmp(new_node->entity, current_ptr->entity) != 0)
+		{
+			if (current_ptr->next = NULL)
+			{
+				current_ptr->next = new_node;
+				new_node->next = NULL;
+				judge = false;
+			}
+			pre_ptr = current_ptr;
+			current_ptr = current_ptr->next;
+		}
+		if (judge)
+		{
+			pre_ptr->next = new_node;
+			new_node->next = current_ptr;
+		}
+	}
+	else
+	{
+		head->next = new_node;
+		new_node->next = NULL;
+	}
+	return KB_OK;
+	
 
 }
 
+/* check if the intent and entity is exists, if it exists check if the response is the same, if not the same then replace, if same then skip*/
+
+int check_exists(char* entity, char* intent, char* response)
+{
+	NODE* temp = head;
+	// check if entity, intent and response exists in the linked list
+	while (temp != NULL)
+	{
+		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
+		{
+			if ((strcmp(temp->response, response) == 0))
+			{
+				return 1;
+			}
+			else
+			{
+				strcpy(temp->response,response);
+				return 1;
+			}
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
 
 /*
  * Read a knowledge base from a file.
@@ -212,16 +300,25 @@ void knowledge_write(FILE* f)
 	intent_list[2] = "[who]";
 	char buffer[255];
 	int j = 0;
+	int header = 0;
 	// empty string
 	char empty[MAX_INPUT] = "";
 	NODE* p = head;
+	
 	while (p != NULL)
 	{
 		if (!strcmp(empty,p->intent) == 0)
 		{
+			if (header == 1)
+			{
+				// so after every rows of entity and response, we would have a new line 
+				fputs("\n",f);
+			}
+			
 			strcpy(empty, p->intent);
 			fputs(p->intent, f);
 			fputs("\n", f);
+		        header = 1;
 		}
 		// format string to concatenate 2 variable together in 1 line
 		j = snprintf(buffer, 255, "%s = %s\n", p->entity, p->response);
