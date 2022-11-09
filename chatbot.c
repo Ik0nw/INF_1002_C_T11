@@ -359,7 +359,7 @@ int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
 int chatbot_is_save(const char *intent) {
 
 	/* to be implemented */
-	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
+	if (compare_token(intent, "SAVE") == 0) {
 		return 1;
 	}
 	else {
@@ -378,9 +378,27 @@ int chatbot_is_save(const char *intent) {
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
 int chatbot_do_save(int inc, char *inv[], char *response, int n) {
+	int skip = 0;
+	if ((strcmp(inv[1], "as") == 0) || strcmp(inv[1], "to")==0) {
+		skip = 1;
+	}
+	if (skip == 1) {
+		FILE* f;
+		f = fopen(inv[2], "w");
+		knowledge_write(f);
+		fclose(f);
+	}
+	else {
+		FILE* f;
+		f = fopen(inv[1], "w");
+		knowledge_write(f);
+		fclose(f);
+	}
+		
 
+
+	// for SAVE, it may be "as" or "to".
 	/* to be implemented */
-
 	return 0;
 
 }

@@ -237,10 +237,12 @@ void knowledge_write(FILE* f)
 	int header = 0;
 	// empty string
 	char empty[MAX_INPUT] = "";
-	NODE* p = head;
+	char buffer2[255];
+	NODE* p = head->next;
 	
 	while (p != NULL)
-	{
+	{	
+		
 		if (!strcmp(empty,p->intent) == 0)
 		{
 			if (header == 1)
@@ -248,10 +250,12 @@ void knowledge_write(FILE* f)
 				// so after every rows of entity and response, we would have a new line 
 				fputs("\n",f);
 			}
-			
 			strcpy(empty, p->intent);
-			fputs(p->intent, f);
-			fputs("\n", f);
+			snprintf(buffer2, 255, "[%s]", p->intent);
+			printf("%s", buffer2);
+			printf("%s", p->intent);
+			//fputs(buffer2, f);
+			//fputs("\n", f);
 		        header = 1;
 		}
 		// format string to concatenate 2 variable together in 1 line
