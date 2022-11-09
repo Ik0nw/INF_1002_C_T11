@@ -35,13 +35,13 @@ extern NODE* head = NULL;
  *   KB_NOTFOUND, if no response could be found
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
-int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+int knowledge_get(const char* intent, const char* entity, char* response, int n) {
 	// if intent not equal to what who where
 	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
 		return KB_INVALID;
 	}
 	NODE* current = head;
-	while (current!= NULL)
+	while (current != NULL)
 	{
 		if (strcmp(current->intent, intent) == 0 && strcmp(current->entity, entity) == 0) {
 			snprintf(response, n, "%s", current->response);
@@ -90,13 +90,13 @@ int check_exists(char* entity, char* intent, char* response)
  *   KB_NOMEM, if there was a memory allocation failure
  *   KB_INVALID, if the intent is not a valid question word
  */
-int knowledge_put(const char *intent, const char *entity, const char *response) {
-	
+int knowledge_put(const char* intent, const char* entity, const char* response) {
+
 	// check if the intent is not equal to what who where
 	//printf("Knowledge_put debug : intent = %s, entity = %s, response = %s", intent, entity, response);
 
 	NODE* new_node = (NODE*)malloc(sizeof(NODE));
-	
+
 	// if failed to create node means no memory.
 	if (new_node == NULL)
 	{
@@ -114,7 +114,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 		NODE* current_ptr = head->next;
 		NODE* pre_ptr = head;
 
-		while (strcmp(new_node->entity, current_ptr->entity) != 0)
+		while (strlen(current_ptr->intent) < strlen(intent))
 		{
 			if (current_ptr->next == NULL)
 			{
@@ -140,7 +140,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	}
 
 	return KB_OK;
-	
+
 
 }
 
@@ -156,11 +156,11 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  *
  * Returns: the number of entity/response pairs successful read from the file
  */
-int knowledge_read(FILE *f) {
+int knowledge_read(FILE* f) {
 	int count = 0;
 	int status = 0;
 	char intent[MAX_INTENT];
-	char buffer[MAX_RESPONSE+MAX_INTENT];
+	char buffer[MAX_RESPONSE + MAX_INTENT];
 	char* tempintent;
 	while (fgets(buffer, 255, f))
 	{
@@ -208,15 +208,19 @@ int knowledge_read(FILE *f) {
  * Reset the knowledge base, removing all know entitities from all intents.
  */
 void knowledge_reset() {
-	NODE* ptr = head;
-	while (ptr != NULL) {
-		ptr = ptr->next;
-		free(head);
-		head = ptr;
-	}
+	NODE* fr = NULL;
+	if (head != NULL)
+	{
+		while (head->next)
+		{
+			fr = head->next;
+			head->next = head->next->next;
+			free(fr);
+		}
 
-	/* for debugging*/
-	printf("All knowledge is been cleared\n");
+		/* for debugging*/
+		printf("All knowledge is been cleared\n");
+	}
 }
 
 
@@ -239,16 +243,16 @@ void knowledge_write(FILE* f)
 	char empty[MAX_INPUT] = "";
 	char buffer2[255];
 	NODE* p = head->next;
-	
+
 	while (p != NULL)
-	{	
-		
-		if (!strcmp(empty,p->intent) == 0)
+	{
+
+		if (!strcmp(empty, p->intent) == 0)
 		{
 			if (header == 1)
 			{
 				// so after every rows of entity and response, we would have a new line 
-				fputs("\n",f);
+				fputs("\n", f);
 			}
 			strcpy(empty, p->intent);
 			snprintf(buffer2, 255, "[%s]", p->intent);
@@ -263,4 +267,3 @@ void knowledge_write(FILE* f)
 		p = p->next;
 	}
 }
-
