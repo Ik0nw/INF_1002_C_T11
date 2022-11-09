@@ -161,6 +161,7 @@ int knowledge_read(FILE *f) {
 	int status = 0;
 	char intent[MAX_INTENT];
 	char buffer[MAX_RESPONSE+MAX_INTENT];
+	char* tempintent;
 	while (fgets(buffer, 255, f))
 	{
 		buffer[strcspn(buffer, "\n")] = 0;
@@ -171,6 +172,10 @@ int knowledge_read(FILE *f) {
 		if (buffer[0] == '[')
 		{
 			strcpy(intent, buffer);
+			tempintent = strtok(intent, "[");
+			tempintent = strtok(tempintent, "]");
+			strcpy(intent, tempintent);
+
 		}
 		else
 		{
@@ -191,8 +196,8 @@ int knowledge_read(FILE *f) {
 	temp = temp->next;
 	while (temp != NULL)
 	{
-		printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
-		knowledge_put(temp->intent, temp->entity, temp->response);
+		//printf("[[[%s]]]", temp->intent);
+		//printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
 		temp = temp->next;
 	}
 	return count;
