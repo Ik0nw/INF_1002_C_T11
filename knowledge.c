@@ -208,18 +208,11 @@ int knowledge_read(FILE* f) {
  * Reset the knowledge base, removing all know entitities from all intents.
  */
 void knowledge_reset() {
-	NODE* fr = NULL;
-	if (head != NULL)
-	{
-		while (head->next)
-		{
-			fr = head->next;
-			head->next = head->next->next;
-			free(fr);
-		}
-
-		/* for debugging*/
-		printf("All knowledge is been cleared\n");
+	NODE *ptr = head;
+	while(ptr!=NULL){
+		ptr=ptr->next;
+		free(head);
+		head=ptr;
 	}
 }
 
@@ -257,7 +250,6 @@ void knowledge_write(FILE* f)
 			strcpy(empty, p->intent);
 			snprintf(buffer2, 255, "[%s]", p->intent);
 			fputs(buffer2, f);
-			//fputs(buffer2, f);
 			fputs("\n", f);
 			header = 1;
 		}
