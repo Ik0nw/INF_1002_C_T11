@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
-
+#include <stdbool.h>
 
 extern NODE* head = NULL;
 /*
@@ -51,28 +51,6 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	return KB_NOTFOUND;
 }
 
-int check_exists(char* entity, char* intent, char* response)
-{
-	NODE* temp = head;
-	// check if entity, intent and response exists in the linked list
-	while (temp != NULL)
-	{
-		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
-		{
-			if ((strcmp(temp->response, response) == 0))
-			{
-				return 1;
-			}
-			else
-			{
-				temp->response = response;
-				return 1;
-			}
-		}
-		temp = temp->next;
-	}
-	return 0;
-}
 
 /*
  * Insert a new response to a question. If a response already exists for the
@@ -100,7 +78,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	int exists = check_exists(entity, intent, response);
 	if (exists)
 	{
-		return KB_FOUND;
+		return KB_OK;
 	}
 	
 	NODE* new_node = (NODE*)malloc(sizeof(NODE));
@@ -142,14 +120,38 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	}
 	else
 	{
-		ptr->next = new_node;
+		head->next = new_node;
 		new_node->next = NULL;
 	}
-	return KB_FOUND;
+	return KB_OK;
 	
 
 }
 
+/* check if the intent and entity is exists, if it exists check if the response is the same, if not the same then replace, if same then skip*/
+
+int check_exists(char* entity, char* intent, char* response)
+{
+	NODE* temp = head;
+	// check if entity, intent and response exists in the linked list
+	while (temp != NULL)
+	{
+		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
+		{
+			if ((strcmp(temp->response, response) == 0))
+			{
+				return 1;
+			}
+			else
+			{
+				strcpy(temp->response,response);
+				return 1;
+			}
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
 
 /*
  * Read a knowledge base from a file.
@@ -310,7 +312,7 @@ void knowledge_write(FILE* f)
 			if (header == 1)
 			{
 				// so after every rows of entity and response, we would have a new line 
-				fputs("\n);
+				fputs("\n",f);
 			}
 			
 			strcpy(empty, p->intent);
