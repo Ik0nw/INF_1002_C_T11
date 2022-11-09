@@ -338,8 +338,8 @@ int chatbot_is_reset(const char* intent) {
  */
 int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
 
-	/* to be implemented */
-
+	knowledge_reset();
+	snprintf(response, n, "Knowledge base reset");
 	return 0;
 
 }
