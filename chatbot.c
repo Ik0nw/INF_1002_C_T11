@@ -171,13 +171,21 @@ int chatbot_is_load(const char *intent) {
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
 int chatbot_do_load(int inc, char *inv[], char *response, int n) {
+	int count;
+	if (inc != 2)
+	{
+		snprintf(response, n, "[!] Invalid format. LOAD <FILENAME.INI>");
+	}
+	else
+		// assume we have the right file format
+	{
+		FILE* f;
+		f = fopen(inv[1], "r");
+		count = knowledge_read(f);
+		snprintf(response, n, "%d pair read from knowledge base", count);
+	}
 
-	/* to be implemented */
-	knowledge_read(fopen("INF1002_Group Project Assignment_Sample.ini", "r"));
-	strncpy(response,"ANYHOW",30);
 	return 0;
-
-}
 
 
 /*
