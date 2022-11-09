@@ -11,7 +11,7 @@
  *
  * You may add helper functions as necessary.
  */
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,6 +19,8 @@
 #include <stdbool.h>
 
 extern NODE* head = NULL;
+
+
 /*
  * Get the response to a question.
  *
@@ -51,6 +53,28 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	return KB_NOTFOUND;
 }
 
+int check_exists(char* entity, char* intent, char* response)
+{
+	NODE* temp = head;
+	// check if entity, intent and response exists in the linked list
+	while (temp != NULL)
+	{
+		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
+		{
+			if ((strcmp(temp->response, response) == 0))
+			{
+				return 1;
+			}
+			else
+			{
+				strcpy(temp->response, response);
+				return 1;
+			}
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
 
 /*
  * Insert a new response to a question. If a response already exists for the
@@ -70,17 +94,8 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 int knowledge_put(const char *intent, const char *entity, const char *response) {
 	
 	// check if the intent is not equal to what who where
-	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
-		return KB_INVALID;
-	}
-	
-	// check if node exists
-	int exists = check_exists(entity, intent, response);
-	if (exists)
-	{
-		return KB_OK;
-	}
-	
+	//printf("Knowledge_put debug : intent = %s, entity = %s, response = %s", intent, entity, response);
+
 	NODE* new_node = (NODE*)malloc(sizeof(NODE));
 	
 	// if failed to create node means no memory.
@@ -94,16 +109,15 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	strcpy(new_node->intent, intent);
 	strcpy(new_node->response, response);
 
-	NODE* temp = head;
-
-	if (temp->next != NULL)
+	if (head != NULL)
 	{
 		bool judge = true;
-		NODE* current_ptr = temp->next;
-		NODE* pre_ptr = temp;
+		NODE* current_ptr = head->next;
+		NODE* pre_ptr = head;
+
 		while (strcmp(new_node->entity, current_ptr->entity) != 0)
 		{
-			if (current_ptr->next = NULL)
+			if (current_ptr->next == NULL)
 			{
 				current_ptr->next = new_node;
 				new_node->next = NULL;
@@ -120,9 +134,12 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	}
 	else
 	{
-		head->next = new_node;
+		NODE* head_node = (NODE*)malloc(sizeof(NODE));
+		head = head_node;
+		head_node->next = new_node;
 		new_node->next = NULL;
 	}
+
 	return KB_OK;
 	
 
@@ -130,28 +147,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 
 /* check if the intent and entity is exists, if it exists check if the response is the same, if not the same then replace, if same then skip*/
 
-int check_exists(char* entity, char* intent, char* response)
-{
-	NODE* temp = head;
-	// check if entity, intent and response exists in the linked list
-	while (temp != NULL)
-	{
-		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
-		{
-			if ((strcmp(temp->response, response) == 0))
-			{
-				return 1;
-			}
-			else
-			{
-				strcpy(temp->response,response);
-				return 1;
-			}
-		}
-		temp = temp->next;
-	}
-	return 0;
-}
+
 
 /*
  * Read a knowledge base from a file.
@@ -162,111 +158,44 @@ int check_exists(char* entity, char* intent, char* response)
  * Returns: the number of entity/response pairs successful read from the file
  */
 int knowledge_read(FILE *f) {
-	char line[MAX_INPUT];
-	char *entity;
-	char *response;
-	int intentcounter = 0;
-	// 1 = what
-	// 2 = where
-	// 3 = who
-	/* to be implemented */
-	if (f == NULL){
-        printf("knowledge_read() | Cannot open file \n");
-    }
-	else {
-		printf("knowledge_read() | File Output: \n");
-		
-		if (head == NULL) {
-			head = (NODE *)malloc(sizeof(NODE));
-			strncpy(head->entity, "SIT", MAX_ENTITY);
-			strncpy(head->response, "in sg", MAX_RESPONSE);
-			strncpy(head->intent, "where", MAX_INTENT);
+	int count = 0;
+	int status = 0;
+	char intent[MAX_INTENT];
+	char buffer[MAX_RESPONSE+MAX_INTENT];
+	while (fgets(buffer, 255, f))
+	{
+		buffer[strcspn(buffer, "\n")] = 0;
+		if (strlen(buffer) == 0)
+		{
+			continue;
 		}
-		while (fgets(line, MAX_INPUT, f) != NULL) {
-			// if (head == NULL) {
-			// 	head = (NODE*)malloc(sizeof(NODE));
-			// 	strncpy(head->entity, "SIT",MAX_ENTITY);
-			// 	strncpy(head->intent, "what", MAX_INTENT);
-			// 	strncpy(head->response,"TEST RESPONSE", MAX_RESPONSE);
-			// }
-			line[strcspn(line, "\n")] = 0;
-			// if(line[strlen(line)-1]=='\n'){
-			// 	line[strlen(line)-1]='\0';
-			// 	printf("%s", line);
-			// }
-			printf("%s", line);
-			//printf("%s vs [what]",line);
-			//printf("%d\n", strcmp(line, "[what]"));
-			
-			//printf("%d",compare_token(line,"[what]"));
-			//printf("%d:%d\n", strlen(line), strlen("[who]"));
-			//printf("%d\n", compare_token(line,"[who]"));
-			//printf("%d\n", compare_token(line,"[who]\n"));
-			if (compare_token(line, "[what]") == 0) {
-				intentcounter = 1;
-				printf("Once");
-			}
-			else if (intentcounter == 1) {
-				if (compare_token(line, "\n") == 0) {
-					intentcounter = 0;
-					continue;
-				}
-				entity = strtok(line, "=");
-				response = strtok(NULL, "=");
-				response[strlen(response) - 1] = '\0';
-				NODE* ptr = head;
-				while (ptr != NULL) {
-					printf("Hello");
-					if (ptr->intent == "what") {
-						printf("yes, its a what\n");
-						if (compare_token(entity, ptr->entity) == 0) {
-							printf("SAME %s", entity);
-						}
-					}
-					ptr = ptr->next;
-				}
-
-
-			}
-			if (compare_token(line, "[where]") == 0) {
-				intentcounter = 2;
-			}
-			else if (intentcounter == 2) {
-				if (compare_token(line, "\n") == 0) {
-					intentcounter = 0;
-					continue;
-				}
-				entity = strtok(line, "=");
-				response = strtok(NULL, "=");
-				response[strlen(response) - 1] = '\0';
-
-			}
-			if (compare_token(line, "[who]") == 0) {
-				intentcounter = 3;
-			}
-			else if (intentcounter == 3) {
-				if (compare_token(line, "\n") == 0) {
-					intentcounter = 0;
-					continue;
-				}
-				entity = strtok(line, "=");
-				response = strtok(NULL, "=");
-				response[strlen(response) - 1] = '\0';
-
-			}
-			
-			
+		if (buffer[0] == '[')
+		{
+			strcpy(intent, buffer);
 		}
-			
-		fclose(f);
-		/*NODE* ptr = head;
-		while (ptr != NULL) {
-			printf("%s\n", ptr->intent);
-			ptr = ptr->next;
-		}*/
-	};
-
-	return 0;
+		else
+		{
+			// split the string by "="
+			char* token = strtok(buffer, "=");
+			char* entity = token;
+			token = strtok(NULL, "=");
+			char* response = token;
+			//printf("intent = %s entity = %s response = %s\n", intent, entity, response);
+			if (knowledge_put(intent, entity, response) == 0)
+			{
+				count++;
+			}
+		}
+		//print the linked list
+	}
+	NODE* temp = head;
+	temp = temp->next;
+	while (temp != NULL)
+	{
+		printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
+		temp = temp->next;
+	}
+	return count;
 }
 
 
