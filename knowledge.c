@@ -51,6 +51,28 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	return KB_NOTFOUND;
 }
 
+int check_exists(char* entity, char* intent, char* response)
+{
+	NODE* temp = head;
+	// check if entity, intent and response exists in the linked list
+	while (temp != NULL)
+	{
+		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
+		{
+			if ((strcmp(temp->response, response) == 0))
+			{
+				return 1;
+			}
+			else
+			{
+				temp->response = response;
+				return 1;
+			}
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
 
 /*
  * Insert a new response to a question. If a response already exists for the
@@ -68,8 +90,63 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
  *   KB_INVALID, if the intent is not a valid question word
  */
 int knowledge_put(const char *intent, const char *entity, const char *response) {
+	
+	// check if the intent is not equal to what who where
+	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
+		return KB_INVALID;
+	}
+	
+	// check if node exists
+	int exists = check_exists(entity, intent, response);
+	if (exists)
+	{
+		return KB_FOUND;
+	}
+	
+	NODE* new_node = (NODE*)malloc(sizeof(NODE));
+	
+	// if failed to create node means no memory.
+	if (new_node == NULL)
+	{
+		return KB_NOMEM;
+	}
 
-	return KB_INVALID;
+	// copy the intent, entity and response to the new node
+	strcpy(new_node->entity, entity);
+	strcpy(new_node->intent, intent);
+	strcpy(new_node->response, response);
+
+	NODE* temp = head;
+
+	if (temp->next != NULL)
+	{
+		bool judge = true;
+		NODE* current_ptr = temp->next;
+		NODE* pre_ptr = temp;
+		while (strcmp(new_node->entity, current_ptr->entity) != 0)
+		{
+			if (current_ptr->next = NULL)
+			{
+				current_ptr->next = new_node;
+				new_node->next = NULL;
+				judge = false;
+			}
+			pre_ptr = current_ptr;
+			current_ptr = current_ptr->next;
+		}
+		if (judge)
+		{
+			pre_ptr->next = new_node;
+			new_node->next = current_ptr;
+		}
+	}
+	else
+	{
+		ptr->next = new_node;
+		new_node->next = NULL;
+	}
+	return KB_FOUND;
+	
 
 }
 
