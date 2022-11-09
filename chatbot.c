@@ -191,7 +191,12 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_question(const char *intent) {
-	if( (strcmp(intent,"where")==0) || (strcmp(intent,"what")==0) || (strcmp(intent,"who")==0) ) {
+	char tempintent[MAX_INTENT] = "";
+	strcpy(tempintent, intent);
+	for (int i = 0; i < strlen(tempintent); i++) {
+		tempintent[i] = tolower(tempintent[i]);
+	}
+	if( (strcmp(tempintent,"where")==0) || (strcmp(tempintent,"what")==0) || (strcmp(tempintent,"who")==0) ) {
 		return 1;
 	}
 	else{
@@ -215,29 +220,69 @@ int chatbot_is_question(const char *intent) {
 
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	int skip = 1;
-	int length = 0;
-	//If inv[1] does not contain "is" or "are", we can include them as entity.
+	int entitylength = 0;
+	strncpy(response, "", MAX_RESPONSE);
+	char inputstore[MAX_INPUT] = "";
+	char resstore[MAX_RESPONSE] = "";
+	char intentstore[MAX_INTENT] = "";
+	char entitystore[MAX_ENTITY] = "";
+	strcpy(intentstore, inv[0]);
+	/*If inv[1] does not contain "is" or "are", we can include them as entity.*/
 	if (!(strcmp(inv[1], "is") == 0 || strcmp(inv[1], "are") == 0)) {
 		skip = 0;
 	}
 	//If inv[1] contains "is" or "are", we can exclude them from entity.
 	if (skip == 1) {
-		length += snprintf(response + length, n, inv[2]);
+		entitylength += snprintf(entitystore + entitylength, n, inv[2]);
 		//sprintf(response, inv[2]);
 		for (int i = 3; i < inc; i++) {
 			//sprintf(response, strlen(response), inv[i]);
-			length += snprintf(response + length, n, " ");
-			length += snprintf(response + length, n, inv[i]);
+			entitylength += snprintf(entitystore + entitylength, n, " ");
+			entitylength += snprintf(entitystore + entitylength, n, inv[i]);
 		}
 	}
 	// If inv[1] doesnt contain "is" or "are", we can include them in entity.
 	else {
 		for (int i = 1; i < inc; i++) {
 			if (i != 1) {
-				length += snprintf(response + length, n, " ");
+				entitylength += snprintf(entitystore + entitylength, n, " ");
 			}
-			length += snprintf(response + length, n, inv[i]);
+			entitylength += snprintf(entitystore + entitylength, n, inv[i]);
 		}
+	}
+	if (knowledge_get(intentstore, entitystore, resstore, n) == KB_NOTFOUND) {
+		printf("%s: I don't know. ", chatbot_botname());
+		for (int i = 0; i < inc; i++) {
+			if (i == strlen(inv) - 3) {
+				printf("%s?\n", inv[i]);
+			}
+			else {
+				if (i == 0) {
+					if (compare_token(intentstore, "what") == 0) {
+						printf("What ");
+					}
+					else if (compare_token(intentstore, "who") == 0) {
+						printf("Who ");
+					}
+					else if (compare_token(intentstore, "where") == 0) {
+						printf("Where ");
+					}
+				}
+				else {
+					printf("%s ", inv[i]);
+				}
+				
+			}
+			
+		}
+		printf("%s: ", chatbot_username());
+		fgets(resstore, n, stdin);
+		//knowledget_put(intentstore, entitystore, resstore);
+
+		printf("\n------------------------------\n");
+	}
+	else {
+		//response in buffer. auto return to main function to print. 
 	}
 
 
