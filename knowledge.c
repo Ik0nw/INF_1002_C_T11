@@ -214,6 +214,8 @@ void knowledge_reset() {
 		free(head);
 		head=ptr;
 	}
+	/* for debugging*/
+	printf("All knowledge is been cleared\n");
 }
 
 
