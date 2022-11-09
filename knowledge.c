@@ -252,11 +252,10 @@ void knowledge_write(FILE* f)
 			}
 			strcpy(empty, p->intent);
 			snprintf(buffer2, 255, "[%s]", p->intent);
-			printf("%s", buffer2);
-			printf("%s", p->intent);
+			fputs(buffer2, f);
 			//fputs(buffer2, f);
-			//fputs("\n", f);
-		        header = 1;
+			fputs("\n", f);
+			header = 1;
 		}
 		// format string to concatenate 2 variable together in 1 line
 		j = snprintf(buffer, 255, "%s = %s\n", p->entity, p->response);
