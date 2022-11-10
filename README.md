@@ -27,10 +27,10 @@ each question intent understood by the chatbot, the knowledge base should suppor
 - [x] chatbot_do_question() to use it.
 
 ### Stage 2
-- [ ] Implement knowledge_put() so that you can add new entities to the knowledge base and
-- [ ] re-implement knowledge_get() to retrieve these entities
-- [ ] Modify chatbot_do_question() so that it asks the user for new knowledge whenever the user asks a question that is not in the knowledge base.
+- [x] Implement knowledge_put() so that you can add new entities to the knowledge base and
+- [x] re-implement knowledge_get() to retrieve these entities
+- [x] Modify chatbot_do_question() so that it asks the user for new knowledge whenever the user asks a question that is not in the knowledge base.
 ### Stage 3
-- [ ] Implement chatbot_do_reset() so that it erases all of the knowledge created by knowledge_put(). The main function resets the chatbot at the beginning of the program,
+- [x] Implement chatbot_do_reset() so that it erases all of the knowledge created by knowledge_put(). The main function resets the chatbot at the beginning of the program,
 and again whenever the user issues the RESET intent.
-- [ ] Implement chatbot_do_save() and chatbot_do_load().
+- [x] Implement chatbot_do_save() and chatbot_do_load().
