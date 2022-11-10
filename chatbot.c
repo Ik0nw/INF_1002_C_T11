@@ -291,6 +291,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 
 		printf("%s: ", chatbot_username());
 		fgets(resstore, n, stdin);
+		resstore[strlen(resstore)-1] = '\0';
 		knowledge_put(intentstore, entitystore, resstore);
 		strncpy(response, "Thank you.", MAX_RESPONSE);
 	}
