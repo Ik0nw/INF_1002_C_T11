@@ -395,7 +395,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 		knowledge_write(f);
 		fclose(f);
 	}
-		
+	snprintf(response, n, "Knowledge base saved to %s",inv[1]);
 
 
 	// for SAVE, it may be "as" or "to".
