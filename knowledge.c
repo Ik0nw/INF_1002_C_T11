@@ -21,6 +21,22 @@
 extern NODE* head = NULL;
 
 
+/* Check if a intent is matched to where who what
+
+If matched return 1  */
+
+int isKeyword(char* buffer) {
+	char* keywords[] = { "where","who","what" };
+	int i, flag = 0;
+	for (i = 0; i < 3; ++i) {
+		if (strcmp(keywords[i], buffer) == 0) {
+			flag = 1;
+			break;
+		}
+	}
+	return flag;
+}
+
 /*
  * Get the response to a question.
  *
@@ -37,7 +53,7 @@ extern NODE* head = NULL;
  */
 int knowledge_get(const char* intent, const char* entity, char* response, int n) {
 	// if intent not equal to what who where
-	if (compare_token(intent, "what") != 0 && compare_token(intent, "who") != 0 && compare_token(intent, "where") != 0) {
+	if (isKeyword(intent) == 0) {
 		return KB_INVALID;
 	}
 	NODE* current = head;
@@ -164,7 +180,7 @@ int knowledge_read(FILE* f) {
 	int count = 0;
 	int status = 0;
 	char intent[MAX_INTENT];
-	char buffer[MAX_RESPONSE + MAX_INTENT];
+	char buffer[MAX_RESPONSE + MAX_ENTITY + 1];
 	char* tempintent;
 	while (fgets(buffer, 255, f))
 	{
@@ -173,39 +189,53 @@ int knowledge_read(FILE* f) {
 		{
 			continue;
 		}
+		// check is this line contains intent keyword with [intent]
 		if (buffer[0] == '[')
 		{
 			//strcpy(intent, buffer);
 			snprintf(intent, MAX_INTENT, buffer);
 			tempintent = strtok(intent, "[");
 			tempintent = strtok(tempintent, "]");
-			// strcpy(intent, tempintent);
-			snprintf(intent, MAX_INTENT, tempintent);
+			if (isKeyword(tempintent))
+			{
+				snprintf(intent, MAX_INTENT, tempintent);
+				status = 1; // means we have the correct intent this section is correct
+			}
+			else
+			{
+				status = 0; // No, this intent is not correct, skip the section
+			}
 
 		}
-		else
+		else if(status)
 		{
-			// split the string by "="
-			char* token = strtok(buffer, "=");
-			char* entity = token;
-			token = strtok(NULL, "=");
-			char* response = token;
-			//printf("intent = %s entity = %s response = %s\n", intent, entity, response);
-			if (knowledge_put(intent, entity, response) == 0)
+			// check if the line contains "="
+			if (strchr(buffer, '=') != NULL)
 			{
-				count++;
+				// split the string by "="
+				char* token = strtok(buffer, "=");
+				char* entity = token;
+				token = strtok(NULL, "=");
+				char* response = token;
+				//printf("intent = %s entity = %s response = %s\n", intent, entity, response);
+				if (knowledge_put(intent, entity, response) == 0)
+				{
+					count++;
+				}
 			}
+
 		}
-		//print the linked list
+		//print the linked list for debugging
 	}
+	/*
 	NODE* temp = head;
 	temp = temp->next;
 	while (temp != NULL)
 	{
-		//printf("[[[%s]]]", temp->intent);
-		//printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
+		printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
 		temp = temp->next;
 	}
+	*/
 	return count;
 }
 
@@ -220,8 +250,6 @@ void knowledge_reset() {
 		free(head);
 		head=ptr;
 	}
-	/* for debugging*/
-	printf("All knowledge is been cleared\n");
 }
 
 
