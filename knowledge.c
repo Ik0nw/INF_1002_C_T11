@@ -11,7 +11,7 @@
  *
  * You may add helper functions as necessary.
  */
-#define _CRT_SECURE_NO_WARNINGS
+// #define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -37,13 +37,13 @@ extern NODE* head = NULL;
  */
 int knowledge_get(const char* intent, const char* entity, char* response, int n) {
 	// if intent not equal to what who where
-	if (strcmp(intent, "what") != 0 && strcmp(intent, "who") != 0 && strcmp(intent, "where") != 0) {
+	if (compare_token(intent, "what") != 0 && compare_token(intent, "who") != 0 && compare_token(intent, "where") != 0) {
 		return KB_INVALID;
 	}
 	NODE* current = head;
 	while (current != NULL)
 	{
-		if (strcmp(current->intent, intent) == 0 && strcmp(current->entity, entity) == 0) {
+		if (compare_token(current->intent, intent) == 0 && compare_token(current->entity, entity) == 0) {
 			snprintf(response, n, "%s", current->response);
 			return KB_OK;
 		}
@@ -58,15 +58,16 @@ int check_exists(char* entity, char* intent, char* response)
 	// check if entity, intent and response exists in the linked list
 	while (temp != NULL)
 	{
-		if (strcmp(temp->entity, entity) == 0 && strcmp(temp->intent, intent) == 0)
+		if (compare_token(temp->entity, entity) == 0 && compare_token(temp->intent, intent) == 0)
 		{
-			if ((strcmp(temp->response, response) == 0))
+			if ((compare_token(temp->response, response) == 0))
 			{
 				return 1;
 			}
 			else
 			{
-				strcpy(temp->response, response);
+				//strcpy(temp->response, response);
+				snprintf(temp->response, MAX_RESPONSE, response);
 				return 1;
 			}
 		}
@@ -104,9 +105,12 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
 	}
 
 	// copy the intent, entity and response to the new node
-	strcpy(new_node->entity, entity);
-	strcpy(new_node->intent, intent);
-	strcpy(new_node->response, response);
+	//strcpy(new_node->entity, entity);
+	snprintf(new_node->entity, MAX_ENTITY, entity);
+	//strcpy(new_node->intent, intent);
+	snprintf(new_node->intent, MAX_INTENT, intent);
+	//strcpy(new_node->response, response);
+	snprintf(new_node->response, MAX_RESPONSE, response);
 
 	if (head != NULL)
 	{
@@ -171,10 +175,12 @@ int knowledge_read(FILE* f) {
 		}
 		if (buffer[0] == '[')
 		{
-			strcpy(intent, buffer);
+			//strcpy(intent, buffer);
+			snprintf(intent, MAX_INTENT, buffer);
 			tempintent = strtok(intent, "[");
 			tempintent = strtok(tempintent, "]");
-			strcpy(intent, tempintent);
+			// strcpy(intent, tempintent);
+			snprintf(intent, MAX_INTENT, tempintent);
 
 		}
 		else
@@ -242,14 +248,15 @@ void knowledge_write(FILE* f)
 	while (p != NULL)
 	{
 
-		if (!strcmp(empty, p->intent) == 0)
+		if (!compare_token(empty, p->intent) == 0)
 		{
 			if (header == 1)
 			{
 				// so after every rows of entity and response, we would have a new line 
 				fputs("\n", f);
 			}
-			strcpy(empty, p->intent);
+			// strcpy(empty, p->intent);
+			snprintf(empty, MAX_INPUT, p->intent);
 			snprintf(buffer2, 255, "[%s]", p->intent);
 			fputs(buffer2, f);
 			fputs("\n", f);
