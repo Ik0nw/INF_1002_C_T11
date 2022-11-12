@@ -191,7 +191,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	int count = 0;
 	int skip = 0;
 	if (inc > 3 || inc == 1) {
-		snprintf(response, n, "Please enter a valid input.");
+		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
 	if ((strcmp(inv[1], "from") == 0)) {
@@ -199,14 +199,14 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	}
 	if (skip == 1) {
 		if (inc == 2) {
-			snprintf(response, n, "Please enter a valid input.");
+			snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 			return 0;
 		}
 		snprintf(inv[1], n, inv[2]);
 	}
 	char* dot = strrchr(inv[1], '.');
 	if (!(dot && !strcmp(dot, ".ini"))) {
-		snprintf(response, n, "Invalid file format. E.g. LOAD [FROM] <File.ini>");
+		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
 	FILE* f;
@@ -376,7 +376,7 @@ int chatbot_is_reset(const char* intent) {
  */
 int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
 	if (inc != 1) {
-		snprintf(response, n, "Please enter a valid input. e.g. RESET");
+		snprintf(response, n, "Invalid format. e.g. RESET");
 		return 0;
 	}
 	knowledge_reset();
@@ -422,7 +422,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 	int skip = 0;
 	int exists = 0;
 	if (inc > 3 || inc == 1) {
-		snprintf(response, n, "Please enter a valid input.");
+		snprintf(response, n, "Invalid format. e.g. SAVE [as/to] <File.ini>");
 		return 0;
 	}
 	if ((strcmp(inv[1], "as") == 0) || strcmp(inv[1], "to")==0) {
@@ -430,14 +430,14 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 	}
 	if (skip == 1) {
 		if (inc == 2) {
-			snprintf(response, n, "Please enter a valid input.");
+			snprintf(response, n, "Invalid format. e.g. SAVE [as/to] <File.ini>");
 			return 0;
 		}
 		snprintf(inv[1], n, inv[2]);
 	}
 	char* dot = strrchr(inv[1], '.');
 	if (!(dot && !strcmp(dot, ".ini"))) {
-		snprintf(response, n, "Invalid file format. E.g. LOAD [FROM] <File.ini>");
+		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
 	FILE* f;
