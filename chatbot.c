@@ -444,7 +444,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 	}
 	char* dot = strrchr(inv[1], '.');
 	if (!(dot && !compare_token(dot, ".ini"))) {
-		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
+		snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 		return 0;
 	}
 	FILE* f;
