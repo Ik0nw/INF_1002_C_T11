@@ -43,7 +43,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
-
+extern NODE* head;
 /*
  * Get the name of the chatbot.
  *
@@ -323,9 +323,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 				}
 
 			}
-
 		}
-
 		printf("%s: ", chatbot_username());
 		fgets(resstore, n, stdin);
 		resstore[strlen(resstore)-1] = '\0';
@@ -450,6 +448,10 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 			prompt_user(response, n, "Please enter a valid input. File already exists. Do you want to overwrite it? (Y/N)");
 		}
 		if (compare_token(response, "Y") == 0) {
+			if (head == NULL) {
+				snprintf(response, n, "Knowledge base is empty. File not overwritten.");
+				return 0;
+			}
 			f = fopen(inv[1], "w");
 			knowledge_write(f);
 			fclose(f);
@@ -461,6 +463,10 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 		
 	}
 	else {
+		if (head == NULL) {
+			snprintf(response, n, "Knowledge base is empty.");
+			return 0;
+		}
 		f = fopen(inv[1], "w");
 		knowledge_write(f);
 		fclose(f);
