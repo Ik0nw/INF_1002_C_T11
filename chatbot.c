@@ -268,11 +268,13 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 
 	int skip = 1;
 	int entitylength = 0;
+	int reslength = 0;
 	strncpy(response, "", MAX_RESPONSE);
 	char inputstore[MAX_INPUT] = "";
 	char resstore[MAX_RESPONSE] = "";
 	char intentstore[MAX_INTENT] = "";
 	char entitystore[MAX_ENTITY] = "";
+
 	for (int i = 0; i < strlen(inv[0]); i++) {
 		inv[0][i] = tolower(inv[0][i]);
 	}
@@ -301,32 +303,30 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 		}
 	}
 	if (knowledge_get(intentstore, entitystore, resstore, n) == KB_NOTFOUND) {
-		printf("%s: I don't know. ", chatbot_botname());
+		reslength += snprintf(response + reslength, n, "I don't know. ");
 		for (int i = 0; i < inc; i++) {
 			if (i == inc-1) {
-				printf("%s?\n", inv[i]);
+				reslength += snprintf(response + reslength, n, "%s?", inv[i]);
 			}
 			else {
 				if (i == 0) {
 					if (compare_token(intentstore, "what") == 0) {
-						printf("What ");
+						reslength += snprintf(response + reslength, n, "What ");
 					}
 					else if (compare_token(intentstore, "who") == 0) {
-						printf("Who ");
+						reslength += snprintf(response + reslength, n, "What ");
 					}
 					else if (compare_token(intentstore, "where") == 0) {
-						printf("Where ");
+						reslength += snprintf(response + reslength, n, "What ");
 					}
 				}
 				else {
-					printf("%s ", inv[i]);
+					reslength += snprintf(response + reslength, n, "%s ", inv[i]);
 				}
 
 			}
 		}
-		printf("%s: ", chatbot_username());
-		fgets(resstore, n, stdin);
-		resstore[strlen(resstore)-1] = '\0';
+		prompt_user(resstore, n, response);
 		knowledge_put(intentstore, entitystore, resstore);
 		strncpy(response, "Thank you.", MAX_RESPONSE);
 	}
@@ -434,7 +434,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 	}
 	char* dot = strrchr(inv[1], '.');
 	if (!(dot && !strcmp(dot, ".ini"))) {
-		snprintf(response, n, "Invalid filename. Please ensure file ends with .ini");
+		snprintf(response, n, "Invalid file format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
 	FILE* f;
