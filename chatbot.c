@@ -206,7 +206,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	}
 	char* dot = strrchr(inv[1], '.');
 	if (!(dot && !strcmp(dot, ".ini"))) {
-		snprintf(response, n, "Invalid filename. Please ensure file ends with .ini");
+		snprintf(response, n, "Invalid file format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
 	FILE* f;
@@ -375,7 +375,10 @@ int chatbot_is_reset(const char* intent) {
  *   0 (the chatbot always continues chatting after beign reset)
  */
 int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
-
+	if (inc != 1) {
+		snprintf(response, n, "Please enter a valid input. e.g. RESET");
+		return 0;
+	}
 	knowledge_reset();
 	snprintf(response, n, "Chatbot reset.");
 	return 0;
