@@ -171,21 +171,58 @@ int chatbot_is_load(const char *intent) {
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
 int chatbot_do_load(int inc, char* inv[], char* response, int n) {
-	int count;
-	if (inc != 2)
-	{
-		snprintf(response, n, "[!] Invalid format. LOAD <FILENAME.INI>");
-	}
-	else
-		// assume we have the right file format
-	{
-		FILE* f;
-		f = fopen(inv[1], "r");
-		count = knowledge_read(f);
-		snprintf(response, n, "%d pair read from knowledge base", count);
-		fclose(f);
-	}
+	//int count;
+	//if (inc != 2)
+	//{
+	//	snprintf(response, n, "[!] Invalid format. LOAD <FILENAME.INI>");
+	//}
+	//else
+	//	// assume we have the right file format
+	//{
+	//	FILE* f;
+	//	f = fopen(inv[1], "r");
+	//	count = knowledge_read(f);
+	//	snprintf(response, n, "%d pair read from knowledge base", count);
+	//	fclose(f);
+	//}
 
+	//return 0;
+
+	int count = 0;
+	int skip = 0;
+	if (inc > 3 || inc == 1) {
+		snprintf(response, n, "Please enter a valid input.");
+		return 0;
+	}
+	if ((strcmp(inv[1], "from") == 0)) {
+		skip = 1;
+	}
+	if (skip == 1) {
+		if (inc == 2) {
+			snprintf(response, n, "Please enter a valid input.");
+			return 0;
+		}
+		snprintf(inv[1], n, inv[2]);
+	}
+	char* dot = strrchr(inv[1], '.');
+	if (!(dot && !strcmp(dot, ".ini"))) {
+		snprintf(response, n, "Invalid filename. Please ensure file ends with .ini");
+		return 0;
+	}
+	FILE* f;
+	f = fopen(inv[1], "r");
+	if (f == NULL) {
+		snprintf(response, n, "File doesn't exist. Please try again");
+		return 0;
+	}
+	count = knowledge_read(f);
+	snprintf(response, n, "%d pair read from knowledge base", count);
+	fclose(f);
+
+
+
+	// for SAVE, it may be "as" or "to".
+	/* to be implemented */
 	return 0;
 
 }
@@ -298,7 +335,9 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	else if(knowledge_get(intentstore, entitystore, response, n) == KB_OK) {
 		//response in buffer. auto return to main function to print. 
 	}
-
+	else if (knowledge_get(intentstore, entitystore, response, n) == KB_INVALID) {
+		strncpy(response, "Wrong Intent.", MAX_RESPONSE);
+	}
 
 	return 0;
 }
@@ -340,7 +379,7 @@ int chatbot_is_reset(const char* intent) {
 int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
 
 	knowledge_reset();
-	snprintf(response, n, "Knowledge base reset");
+	snprintf(response, n, "Chatbot reset.");
 	return 0;
 
 }
@@ -380,22 +419,53 @@ int chatbot_is_save(const char *intent) {
  */
 int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 	int skip = 0;
+	int exists = 0;
+	if (inc > 3 || inc == 1) {
+		snprintf(response, n, "Please enter a valid input.");
+		return 0;
+	}
 	if ((strcmp(inv[1], "as") == 0) || strcmp(inv[1], "to")==0) {
 		skip = 1;
 	}
 	if (skip == 1) {
-		FILE* f;
-		f = fopen(inv[2], "w");
-		knowledge_write(f);
+		if (inc == 2) {
+			snprintf(response, n, "Please enter a valid input.");
+			return 0;
+		}
+		snprintf(inv[1], n, inv[2]);
+	}
+	char* dot = strrchr(inv[1], '.');
+	if (!(dot && !strcmp(dot, ".ini"))) {
+		snprintf(response, n, "Invalid filename. Please ensure file ends with .ini");
+		return 0;
+	}
+	FILE* f;
+	if ((f = fopen(inv[1], "r"))) {
 		fclose(f);
+		exists = 1;
+	}
+	if (exists == 1) {
+		prompt_user(response, n, "File already exists. Do you want to overwrite it? (Y/N)");
+		while (!(compare_token(response, "Y") == 0 || compare_token(response, "N") == 0)) {
+			prompt_user(response, n, "Please enter a valid input. File already exists. Do you want to overwrite it? (Y/N)");
+		}
+		if (compare_token(response, "Y") == 0) {
+			f = fopen(inv[1], "w");
+			knowledge_write(f);
+			fclose(f);
+			snprintf(response, n, "Knowledge base saved to %s", inv[1]);
+		}
+		else if (compare_token(response, "N") == 0) {
+			snprintf(response, n, "Knowledge base not saved to %s", inv[1]);
+		}
+		
 	}
 	else {
-		FILE* f;
 		f = fopen(inv[1], "w");
 		knowledge_write(f);
 		fclose(f);
+		snprintf(response, n, "Knowledge base saved to %s", inv[1]);
 	}
-	snprintf(response, n, "Knowledge base saved to %s",inv[1]);
 
 
 	// for SAVE, it may be "as" or "to".
