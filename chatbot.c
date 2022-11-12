@@ -314,10 +314,10 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 						reslength += snprintf(response + reslength, n, "What ");
 					}
 					else if (compare_token(intentstore, "who") == 0) {
-						reslength += snprintf(response + reslength, n, "What ");
+						reslength += snprintf(response + reslength, n, "Who ");
 					}
 					else if (compare_token(intentstore, "where") == 0) {
-						reslength += snprintf(response + reslength, n, "What ");
+						reslength += snprintf(response + reslength, n, "Where ");
 					}
 				}
 				else {
