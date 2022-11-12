@@ -194,7 +194,8 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
-	if ((strcmp(inv[1], "from") == 0)) {
+
+	if (compare_token(inv[1], "from") == 0) {
 		skip = 1;
 	}
 	if (skip == 1) {
@@ -205,7 +206,9 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 		snprintf(inv[1], n, inv[2]);
 	}
 	char* dot = strrchr(inv[1], '.');
-	if (!(dot && !strcmp(dot, ".ini"))) {
+	//if (!(dot && !strcmp(dot, ".ini"))) {
+	if (!(dot && !compare_token(dot, ".ini"))) {
+		
 		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
@@ -238,11 +241,11 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_question(const char *intent){
 	char tempintent[MAX_INTENT] = "";
-	strcpy(tempintent, intent);
+	snprintf(tempintent,MAX_INTENT, intent);
 	for (int i = 0; i < strlen(tempintent); i++) {
 		tempintent[i] = tolower(tempintent[i]);
 	}
-	if( (strcmp(tempintent,"where")==0) || (strcmp(tempintent,"what")==0) || (strcmp(tempintent,"who")==0) ) {
+	if(isKeyword(tempintent)) {
 		return 1;
 	}
 	else{
@@ -269,7 +272,8 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	int skip = 1;
 	int entitylength = 0;
 	int reslength = 0;
-	strncpy(response, "", MAX_RESPONSE);
+	//strncpy(response, "", MAX_RESPONSE);
+	snprintf(response, MAX_RESPONSE, "");
 	char inputstore[MAX_INPUT] = "";
 	char resstore[MAX_RESPONSE] = "";
 	char intentstore[MAX_INTENT] = "";
@@ -278,9 +282,10 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	for (int i = 0; i < strlen(inv[0]); i++) {
 		inv[0][i] = tolower(inv[0][i]);
 	}
-	strcpy(intentstore, inv[0]);
+	//strcpy(intentstore, inv[0]);
+	snprintf(intentstore, MAX_INTENT, inv[0]);
 	/*If inv[1] does not contain "is" or "are", we can include them as entity.*/
-	if (!(strcmp(inv[1], "is") == 0 || strcmp(inv[1], "are") == 0)) {
+	if (!(compare_token(inv[1], "is") == 0 || compare_token(inv[1], "are") == 0)) {
 		skip = 0;
 	}
 	//If inv[1] contains "is" or "are", we can exclude them from entity.
@@ -328,13 +333,15 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 		}
 		prompt_user(resstore, n, response);
 		knowledge_put(intentstore, entitystore, resstore);
-		strncpy(response, "Thank you.", MAX_RESPONSE);
+		//strncpy(response, "Thank you.", MAX_RESPONSE);
+		snprintf(response, MAX_RESPONSE, "Thank you.");
 	}
 	else if(knowledge_get(intentstore, entitystore, response, n) == KB_OK) {
 		//response in buffer. auto return to main function to print. 
 	}
 	else if (knowledge_get(intentstore, entitystore, response, n) == KB_INVALID) {
-		strncpy(response, "Wrong Intent.", MAX_RESPONSE);
+		//strncpy(response, "Wrong Intent.", MAX_RESPONSE);
+		snprintf(response, MAX_RESPONSE, "Wrong Intent.");
 	}
 
 	return 0;
@@ -422,22 +429,22 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 	int skip = 0;
 	int exists = 0;
 	if (inc > 3 || inc == 1) {
-		snprintf(response, n, "Invalid format. e.g. SAVE [as/to] <File.ini>");
+		snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 		return 0;
 	}
-	if ((strcmp(inv[1], "as") == 0) || strcmp(inv[1], "to")==0) {
+	if ((compare_token(inv[1], "as") == 0) || compare_token(inv[1], "to")==0) {
 		skip = 1;
 	}
 	if (skip == 1) {
 		if (inc == 2) {
-			snprintf(response, n, "Invalid format. e.g. SAVE [as/to] <File.ini>");
+			snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 			return 0;
 		}
 		snprintf(inv[1], n, inv[2]);
 	}
 	char* dot = strrchr(inv[1], '.');
-	if (!(dot && !strcmp(dot, ".ini"))) {
-		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
+	if (!(dot && !compare_token(dot, ".ini"))) {
+		snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 		return 0;
 	}
 	FILE* f;
