@@ -51,7 +51,7 @@ extern NODE* head;
  */
 const char *chatbot_botname() {
 
-	return "Chatbot";
+	return "Zeus";
 
 }
 
@@ -63,7 +63,7 @@ const char *chatbot_botname() {
  */
 const char *chatbot_username() {
 
-	return "User";
+	return "Prometheus";
 
 }
 
@@ -115,7 +115,7 @@ int chatbot_main(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_exit(const char *intent) {
-
+	// intent is "exit" or "quit" it will return 1. if not, it will return 0
 	return compare_token(intent, "exit") == 0 || compare_token(intent, "quit") == 0;
 
 }
@@ -131,7 +131,7 @@ int chatbot_is_exit(const char *intent) {
  *   0 (the chatbot always continues chatting after a question)
  */
 int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
-
+	// Store goodbye to response buffer
 	snprintf(response, n, "Goodbye!");
 
 	return 1;
@@ -151,7 +151,7 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_load(const char *intent) {
 
-	/* to be implemented */
+	// return 1 if intent matches "load"(case-insensitive).
 	if (compare_token(intent, "LOAD") == 0) {
 		return 1;
 	}
@@ -171,49 +171,33 @@ int chatbot_is_load(const char *intent) {
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
 int chatbot_do_load(int inc, char* inv[], char* response, int n) {
-	//int count;
-	//if (inc != 2)
-	//{
-	//	snprintf(response, n, "[!] Invalid format. LOAD <FILENAME.INI>");
-	//}
-	//else
-	//	// assume we have the right file format
-	//{
-	//	FILE* f;
-	//	f = fopen(inv[1], "r");
-	//	count = knowledge_read(f);
-	//	snprintf(response, n, "%d pair read from knowledge base", count);
-	//	fclose(f);
-	//}
-
-	//return 0;
-
 	int count = 0;
-	int skip = 0;
+
+	// if word > 3 or word is 1, its invalid. 
 	if (inc > 3 || inc == 1) {
 		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
-
+	// if 2nd word is 'from'
 	if (compare_token(inv[1], "from") == 0) {
-		skip = 1;
-	}
-	if (skip == 1) {
+		// if theres only 2 words, theres no file indicate. Throw an error. 
 		if (inc == 2) {
 			snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 			return 0;
 		}
+		//replace 'from' with filename.
 		snprintf(inv[1], n, inv[2]);
 	}
+	
 	char* dot = strrchr(inv[1], '.');
-	//if (!(dot && !strcmp(dot, ".ini"))) {
+	// if filename do not ends with .ini
 	if (!(dot && !compare_token(dot, ".ini"))) {
-		
 		snprintf(response, n, "Invalid format. E.g. LOAD [FROM] <File.ini>");
 		return 0;
 	}
 	FILE* f;
 	f = fopen(inv[1], "r");
+	// if file doesnt exist.
 	if (f == NULL) {
 		snprintf(response, n, "File doesn't exist. Please try again");
 		return 0;
@@ -221,13 +205,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	count = knowledge_read(f);
 	snprintf(response, n, "%d pair read from knowledge base", count);
 	fclose(f);
-
-
-
-	// for SAVE, it may be "as" or "to".
-	/* to be implemented */
 	return 0;
-
 }
 /*
  * Determine whether an intent is a question.
@@ -241,6 +219,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_question(const char *intent){
 	char tempintent[MAX_INTENT] = "";
+	// copy intent to tempintent so that we can iterate through and change contents
 	snprintf(tempintent,MAX_INTENT, intent);
 	for (int i = 0; i < strlen(tempintent); i++) {
 		tempintent[i] = tolower(tempintent[i]);
@@ -251,7 +230,6 @@ int chatbot_is_question(const char *intent){
 	else{
 		return 0;
 	}
-	/* Implemented */
 }
 /*
  * Answer a question.
@@ -272,28 +250,24 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	int skip = 1;
 	int entitylength = 0;
 	int reslength = 0;
-	//strncpy(response, "", MAX_RESPONSE);
 	snprintf(response, MAX_RESPONSE, "");
 	char inputstore[MAX_INPUT] = "";
 	char resstore[MAX_RESPONSE] = "";
 	char intentstore[MAX_INTENT] = "";
 	char entitystore[MAX_ENTITY] = "";
-
+	// change intent to lowercase.
 	for (int i = 0; i < strlen(inv[0]); i++) {
 		inv[0][i] = tolower(inv[0][i]);
 	}
-	//strcpy(intentstore, inv[0]);
 	snprintf(intentstore, MAX_INTENT, inv[0]);
-	/*If inv[1] does not contain "is" or "are", we can include them as entity.*/
+	// If inv[1] does not contain "is" or "are", we can include them as entity.
 	if (!(compare_token(inv[1], "is") == 0 || compare_token(inv[1], "are") == 0)) {
 		skip = 0;
 	}
 	//If inv[1] contains "is" or "are", we can exclude them from entity.
 	if (skip == 1) {
 		entitylength += snprintf(entitystore + entitylength, n, inv[2]);
-		//sprintf(response, inv[2]);
 		for (int i = 3; i < inc; i++) {
-			//sprintf(response, strlen(response), inv[i]);
 			entitylength += snprintf(entitystore + entitylength, n, " ");
 			entitylength += snprintf(entitystore + entitylength, n, inv[i]);
 		}
@@ -333,14 +307,12 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 		}
 		prompt_user(resstore, n, response);
 		knowledge_put(intentstore, entitystore, resstore);
-		//strncpy(response, "Thank you.", MAX_RESPONSE);
 		snprintf(response, MAX_RESPONSE, "Thank you.");
 	}
 	else if(knowledge_get(intentstore, entitystore, response, n) == KB_OK) {
 		//response in buffer. auto return to main function to print. 
 	}
 	else if (knowledge_get(intentstore, entitystore, response, n) == KB_INVALID) {
-		//strncpy(response, "Wrong Intent.", MAX_RESPONSE);
 		snprintf(response, MAX_RESPONSE, "Wrong Intent.");
 	}
 
@@ -360,7 +332,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  */
  /* Done by CX*/
 int chatbot_is_reset(const char* intent) {
-
+	// return 1 if intent is 'reset'(case-insensitive)
 	if (compare_token(intent, "reset") == 0)
 	{
 		return 1;
@@ -382,10 +354,12 @@ int chatbot_is_reset(const char* intent) {
  *   0 (the chatbot always continues chatting after beign reset)
  */
 int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
+	//if reset is not exactly 1 word.
 	if (inc != 1) {
 		snprintf(response, n, "Invalid format. e.g. RESET");
 		return 0;
 	}
+	//reset knowledge base.
 	knowledge_reset();
 	snprintf(response, n, "Chatbot reset.");
 	return 0;
@@ -406,7 +380,7 @@ int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
 /* Done by CX*/
 int chatbot_is_save(const char *intent) {
 
-	/* to be implemented */
+	// return 1 if intent is 'save'(case-insensitive).
 	if (compare_token(intent, "SAVE") == 0) {
 		return 1;
 	}
@@ -426,16 +400,14 @@ int chatbot_is_save(const char *intent) {
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
 int chatbot_do_save(int inc, char *inv[], char *response, int n) {
-	int skip = 0;
 	int exists = 0;
+	// if there are more than 3 word or only intent, it will throw an error.
 	if (inc > 3 || inc == 1) {
 		snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 		return 0;
 	}
+	// if 2nd word is 'as' or 'to', we can replace it with 3rd word(filename).
 	if ((compare_token(inv[1], "as") == 0) || compare_token(inv[1], "to")==0) {
-		skip = 1;
-	}
-	if (skip == 1) {
 		if (inc == 2) {
 			snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 			return 0;
@@ -443,6 +415,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 		snprintf(inv[1], n, inv[2]);
 	}
 	char* dot = strrchr(inv[1], '.');
+	// if filename dont end with .ini, it will throw an error.
 	if (!(dot && !compare_token(dot, ".ini"))) {
 		snprintf(response, n, "Invalid format. e.g. SAVE [AS/TO] <File.ini>");
 		return 0;
@@ -453,6 +426,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 		exists = 1;
 	}
 	if (exists == 1) {
+		// prompt if user wants to overwrite existing file.
 		prompt_user(response, n, "File already exists. Do you want to overwrite it? (Y/N)");
 		while (!(compare_token(response, "Y") == 0 || compare_token(response, "N") == 0)) {
 			prompt_user(response, n, "Please enter a valid input. File already exists. Do you want to overwrite it? (Y/N)");

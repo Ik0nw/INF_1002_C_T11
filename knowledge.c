@@ -59,6 +59,7 @@ int knowledge_get(const char* intent, const char* entity, char* response, int n)
 	NODE* current = head;
 	while (current != NULL)
 	{
+		// Copy response to buffer if intent and entity match.
 		if (compare_token(current->intent, intent) == 0 && compare_token(current->entity, entity) == 0) {
 			snprintf(response, n, "%s", current->response);
 			return KB_OK;
@@ -74,15 +75,17 @@ int check_exists(char* entity, char* intent, char* response)
 	// check if entity, intent and response exists in the linked list
 	while (temp != NULL)
 	{
+		// Check if entity and intent matches 
 		if (compare_token(temp->entity, entity) == 0 && compare_token(temp->intent, intent) == 0)
 		{
 			if ((compare_token(temp->response, response) == 0))
 			{
+				// if the response is the same it will return 0
 				return 1;
 			}
 			else
 			{
-				//strcpy(temp->response, response);
+				// if the response is different it will be replaced with new response
 				snprintf(temp->response, MAX_RESPONSE, response);
 				return 1;
 			}
@@ -109,11 +112,8 @@ int check_exists(char* entity, char* intent, char* response)
  */
 int knowledge_put(const char* intent, const char* entity, const char* response) {
 
-	// check if the intent is not equal to what who where
-	//printf("Knowledge_put debug : intent = %s, entity = %s, response = %s", intent, entity, response);
-
+	// allocate memory for new_node
 	NODE* new_node = (NODE*)malloc(sizeof(NODE));
-
 	// if failed to create node means no memory.
 	if (new_node == NULL)
 	{
@@ -121,11 +121,8 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
 	}
 
 	// copy the intent, entity and response to the new node
-	//strcpy(new_node->entity, entity);
 	snprintf(new_node->entity, MAX_ENTITY, entity);
-	//strcpy(new_node->intent, intent);
 	snprintf(new_node->intent, MAX_INTENT, intent);
-	//strcpy(new_node->response, response);
 	snprintf(new_node->response, MAX_RESPONSE, response);
 
 	if (head != NULL)
@@ -164,10 +161,6 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
 
 }
 
-/* check if the intent and entity is exists, if it exists check if the response is the same, if not the same then replace, if same then skip*/
-
-
-
 /*
  * Read a knowledge base from a file.
  *
@@ -192,10 +185,12 @@ int knowledge_read(FILE* f) {
 		// check is this line contains intent keyword with [intent]
 		if (buffer[0] == '[')
 		{
-			//strcpy(intent, buffer);
 			snprintf(intent, MAX_INTENT, buffer);
+			// Strip [ from intent and store to tempintent the rest.
 			tempintent = strtok(intent, "[");
+			// Strip ] from tempintent and store back to it.
 			tempintent = strtok(tempintent, "]");
+			// Check if it contains who/what/where
 			if (isKeyword(tempintent))
 			{
 				snprintf(intent, MAX_INTENT, tempintent);
@@ -225,17 +220,7 @@ int knowledge_read(FILE* f) {
 			}
 
 		}
-		//print the linked list for debugging
 	}
-	/*
-	NODE* temp = head;
-	temp = temp->next;
-	while (temp != NULL)
-	{
-		printf("intent = %s entity = %s response = %s\n", temp->intent, temp->entity, temp->response);
-		temp = temp->next;
-	}
-	*/
 	return count;
 }
 
@@ -283,7 +268,6 @@ void knowledge_write(FILE* f)
 				// so after every rows of entity and response, we would have a new line 
 				fputs("\n", f);
 			}
-			// strcpy(empty, p->intent);
 			snprintf(empty, MAX_INPUT, p->intent);
 			snprintf(buffer2, 255, "[%s]", p->intent);
 			fputs(buffer2, f);
