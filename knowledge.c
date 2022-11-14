@@ -125,29 +125,35 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
 	snprintf(new_node->intent, MAX_INTENT, intent);
 	snprintf(new_node->response, MAX_RESPONSE, response);
 
+	// check if the linked list is empty
 	if (head != NULL)
 	{
 		bool judge = true;
-		NODE* current_ptr = head->next;
-		NODE* pre_ptr = head;
-
+		NODE* current_ptr = head->next; //Current pointer points at the first element node
+		NODE* pre_ptr = head; // pre_ptr points at the dummy node
+		// arrange by the len of word (who->what->where)
 		while (strlen(current_ptr->intent) < strlen(intent))
-		{
+		{	
+			// If the node is the last null
 			if (current_ptr->next == NULL)
-			{
+			{	
+				// point the last node, to the new node
 				current_ptr->next = new_node;
 				new_node->next = NULL;
 				judge = false;
 			}
+			// increment the pointer to next node
 			pre_ptr = current_ptr;
 			current_ptr = current_ptr->next;
 		}
+		//insert the node between the pre_ptr and current_ptr
 		if (judge)
 		{
 			pre_ptr->next = new_node;
 			new_node->next = current_ptr;
 		}
 	}
+	// if the linked list is empty, we will create a dummy node, and point the dummy node to the new_node contains value.
 	else
 	{
 		NODE* head_node = (NODE*)malloc(sizeof(NODE));
