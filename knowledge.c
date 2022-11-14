@@ -29,7 +29,7 @@ int isKeyword(char* buffer) {
 	char* keywords[] = { "where","who","what" };
 	int i, flag = 0;
 	for (i = 0; i < 3; ++i) {
-		if (strcmp(keywords[i], buffer) == 0) {
+		if (compare_token(keywords[i], buffer) == 0) {
 			flag = 1;
 			break;
 		}
