@@ -62,3 +62,4 @@ typedef struct knowledge_node {
 	char response[MAX_RESPONSE];
 	struct knowledge_node* next;
 }NODE;
+int isKeyword(char* buffer);
