@@ -106,7 +106,7 @@ int check_exists(char* entity, char* intent, char* response)
  *   response  - the response for this question and entity
  *
  * Returns:
- *   KB_FOUND, if successful
+ *   KB_OK, if successful
  *   KB_NOMEM, if there was a memory allocation failure
  *   KB_INVALID, if the intent is not a valid question word
  */
@@ -232,7 +232,7 @@ int knowledge_read(FILE* f) {
 
 
 /*
- * Reset the knowledge base, removing all know entitities from all intents.
+ * Reset the knowledge base, removing all known entitities from all intents.
  */
 void knowledge_reset() {
 	NODE *ptr = head;

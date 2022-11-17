@@ -204,7 +204,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 		return 0;
 	}
 	count = knowledge_read(f);
-	snprintf(response, n, "%d pair read from knowledge base", count);
+	snprintf(response, n, "%d pair(s) read from knowledge base", count);
 	fclose(f);
 	return 0;
 }
