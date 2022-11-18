@@ -247,6 +247,10 @@ int chatbot_is_question(const char *intent){
  */
 
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
+	if (inc < 3) {
+		snprintf(response, MAX_RESPONSE, "Invalid format. E.g. What/Who/Where [is/are] SIT");
+		return 0;
+	}
 
 	int skip = 1;
 	int entitylength = 0;
@@ -307,6 +311,9 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 			}
 		}
 		prompt_user(resstore, n, response);
+		while (compare_token(resstore,"") == 0) {
+			prompt_user(resstore, n, "Empty response received. Please key in the correct response");
+		}
 		knowledge_put(intentstore, entitystore, resstore);
 		snprintf(response, MAX_RESPONSE, "Thank you.");
 	}
