@@ -69,32 +69,6 @@ int knowledge_get(const char* intent, const char* entity, char* response, int n)
 	return KB_NOTFOUND;
 }
 
-int check_exists(char* entity, char* intent, char* response)
-{
-	NODE* temp = head;
-	// check if entity, intent and response exists in the linked list
-	while (temp != NULL)
-	{
-		// Check if entity and intent matches 
-		if (compare_token(temp->entity, entity) == 0 && compare_token(temp->intent, intent) == 0)
-		{
-			if ((compare_token(temp->response, response) == 0))
-			{
-				// if the response is the same it will return 0
-				return 1;
-			}
-			else
-			{
-				// if the response is different it will be replaced with new response
-				snprintf(temp->response, MAX_RESPONSE, response);
-				return 1;
-			}
-		}
-		temp = temp->next;
-	}
-	return 0;
-}
-
 /*
  * Insert a new response to a question. If a response already exists for the
  * given intent and entity, it will be overwritten. Otherwise, it will be added
