@@ -338,7 +338,6 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "reset"
  *  0, otherwise
  */
- /* Done by CX*/
 int chatbot_is_reset(const char* intent) {
 	// return 1 if intent is 'reset'(case-insensitive)
 	if (compare_token(intent, "reset") == 0)
@@ -385,7 +384,6 @@ int chatbot_do_reset(int inc, char *inv[1], char *response, int n) {
  *  1, if the intent is "what", "where", or "who"
  *  0, otherwise
  */
-/* Done by CX*/
 int chatbot_is_save(const char *intent) {
 
 	// return 1 if intent is 'save'(case-insensitive).

@@ -137,8 +137,6 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
 	}
 
 	return KB_OK;
-
-
 }
 
 /*
